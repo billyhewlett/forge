@@ -1,0 +1,7 @@
+Name:AADoubleForge
+DeckFile:AADoubleForge
+Singleton:True
+CustomRankings:AADoubleForgeRankings.txt
+
+Booster: 15 Any
+NumPacks: 3

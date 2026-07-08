@@ -838,5 +838,31 @@
                 </plugins>
             </build>
         </profile>
+
+        <!-- Windows build: D8 is run separately via PowerShell (bypasses cmd.exe 8191-char limit).
+             Signing is delegated to uber-apk-signer (avoids sun.security.pkcs Java 22 incompatibility).
+             Use -P android-debug,skip-d8 after running D8 manually, then sign with uber-apk-signer. -->
+        <profile>
+            <id>skip-d8</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.simpligility.maven.plugins</groupId>
+                        <artifactId>android-maven-plugin</artifactId>
+                        <configuration>
+                            <sign>
+                                <debug>false</debug>
+                            </sign>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>default-d8</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>

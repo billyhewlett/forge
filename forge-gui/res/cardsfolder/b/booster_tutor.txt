@@ -1,6 +1,6 @@
 Name:Booster Tutor
 ManaCost:B
 Types:Instant
-A:SP$ MakeCard | Booster$ True | Reveal$ True | Zone$ Hand | StackDescription$ SpellDescription | SpellDescription$ Open a sealed Magic booster pack, reveal the cards, and put one of them into your hand. (Remove that card from your deck before beginning a new game.)
+A:SP$ SearchAndSet | Cost$ B | MinAmount$ 0 | MaxAmount$ 1 | ChangeNum$ 1 | Destination$ Hand | Origin$ Library | StackDescription$ SpellDescription | SpellDescription$ Search your library for a card, put that card into your hand, then shuffle.
 AI:RemoveDeck:Random
 Oracle:Open a sealed Magic booster pack, reveal the cards, and put one of them into your hand. (Remove that card from your deck before beginning a new game.)

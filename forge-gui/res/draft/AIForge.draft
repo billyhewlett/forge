@@ -1,0 +1,8 @@
+Name:AIForge
+DeckFile:AIForge
+Singleton:True
+NumPlayers:6
+CustomRankings:AIForgeRankings.txt
+
+Booster: 15 Any
+NumPacks: 3

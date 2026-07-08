@@ -55,6 +55,9 @@ public class LimitedPlayer {
 
     private int playerFlags = 0;
 
+    /** Set by the draft UI when the player taps "Use Cogwork Librarian" before a pick. */
+    public boolean cogworkLibrarianActivatedByUI = false;
+
     private final List<PaperCard> faceUp = Lists.newArrayList();
     private final List<PaperCard> revealed = Lists.newArrayList();
     private final Map<String, List<String>> noted = new HashMap<>();
@@ -385,7 +388,7 @@ public class LimitedPlayer {
             }
         }
 
-        return true;
+        return passPack;
     }
 
     public void addLog(String message) {
@@ -693,10 +696,17 @@ public class LimitedPlayer {
         return true;
     }
 
+    /** Returns true if the Cogwork Librarian extra-draft opportunity is currently pending. */
+    public boolean hasCogworkLibrarianAvailable() {
+        return (playerFlags & CogworkLibrarianExtraDraft) == CogworkLibrarianExtraDraft;
+    }
+
     public boolean handleCogworkLibrarian(DraftPack pack, PaperCard drafted) {
-        if(pack.isEmpty())
-            return false;
-        return !Objects.equals(SGuiChoose.one("Draft an extra pick with Cogwork Librarian?", Lists.newArrayList("Yes", "No")), "No");
+        if (pack.isEmpty()) return false;
+        // Opt-in: the UI sets cogworkLibrarianActivatedByUI via a button tap before the pick.
+        boolean activated = cogworkLibrarianActivatedByUI;
+        cogworkLibrarianActivatedByUI = false; // consume the flag
+        return activated;
     }
 
     public boolean handleAgentOfAcquisitions(DraftPack pack, PaperCard drafted) {
@@ -743,6 +753,13 @@ public class LimitedPlayer {
     }
 
     public void addSingleBoosterPack() {
+        DraftPack cubePack = draft.addBooster();
+        if (cubePack != null) {
+            packQueue.add(cubePack);
+            addLog(name() + " added a cube booster to the draft (Lore Seeker).");
+            return;
+        }
+
         // if this is just a normal draft, allow picking a pack from any set
         // If this is adventure or quest or whatever then we should limit it to something
         List<CardEdition> possibleEditions = FModel.getMagicDb().getEditions().stream()

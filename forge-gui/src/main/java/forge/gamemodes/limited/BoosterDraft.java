@@ -76,6 +76,9 @@ public class BoosterDraft implements IBoosterDraft {
     static final List<CustomLimited> customs = new ArrayList<>();
     protected LimitedPoolType draftFormat;
 
+    private UnOpenedProduct cubeProduct = null;
+    private List<PaperCard> cubeSurplus = null;
+
     protected final List<IUnOpenedProduct> product = new ArrayList<>();
     public static void initializeCustomDrafts() {
         loadCustomDrafts();
@@ -475,6 +478,7 @@ public class BoosterDraft implements IBoosterDraft {
 
         final UnOpenedProduct toAdd = new UnOpenedProduct(tpl, dPool);
         toAdd.setLimitedPool(draft.isSingleton());
+        this.cubeProduct = toAdd;
         for (int i = 0; i < draft.getNumPacks(); i++) {
             this.product.add(toAdd);
         }
@@ -569,7 +573,22 @@ public class BoosterDraft implements IBoosterDraft {
                 this.players.get(i).receiveUnopenedPack(pack);
             }
         }
+        if (cubeProduct != null) {
+            cubeSurplus = new ArrayList<>(cubeProduct.getRemainingCards());
+            Collections.shuffle(cubeSurplus);
+        }
         startRound();
+    }
+
+    @Override
+    public DraftPack addBooster() {
+        if (cubeSurplus == null || cubeSurplus.isEmpty()) {
+            return null;
+        }
+        int packSize = Math.min(currentBoosterSize > 0 ? currentBoosterSize : 15, cubeSurplus.size());
+        List<PaperCard> cards = new ArrayList<>(cubeSurplus.subList(0, packSize));
+        cubeSurplus.subList(0, packSize).clear();
+        return new DraftPack(cards, nextId++);
     }
 
     public boolean startRound() {

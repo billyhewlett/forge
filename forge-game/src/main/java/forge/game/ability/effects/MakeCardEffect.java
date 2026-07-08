@@ -89,6 +89,16 @@ public class MakeCardEffect extends SpellAbilityEffect {
                     else
                         throw new RuntimeException("MakeCardEffect didn't find card face by name: " + pc);
                 }
+            } else if (sa.hasParam("AllLibraries")) {
+                // Collect cards from all players' libraries (used by Booster Tutor in cube drafts)
+                for (Player p : game.getPlayers()) {
+                    for (forge.game.card.Card c : p.getZone(ZoneType.Library)) {
+                        if (c.getPaperCard() != null && c.getPaperCard().getRules() != null) {
+                            ICardFace face = c.getPaperCard().getRules().getMainPart();
+                            if (face != null) faces.add(face);
+                        }
+                    }
+                }
             }
 
             if (!faces.isEmpty()) {

@@ -21,6 +21,7 @@ import forge.card.CardEdition;
 import forge.deck.CardPool;
 import forge.deck.Deck;
 import forge.deck.DeckBase;
+import forge.deck.DeckSection;
 import forge.item.PaperCard;
 import forge.item.SealedTemplate;
 import forge.model.FModel;
@@ -34,6 +35,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * <p>
@@ -121,7 +123,21 @@ public class CustomLimited extends DeckBase {
         cd.numPlayers = data.getInt("NumPlayers");
         cd.customRankingsFile = data.get("CustomRankings", "rankings_cubecobra.txt");
         final Deck deckCube = cubes.get(data.get("DeckFile"));
-        cd.cardPool = deckCube == null ? ItemPool.createFrom(FModel.getMagicDb().getCommonCards().getUniqueCards(), PaperCard.class) : deckCube.getMain();
+        if (deckCube == null) {
+            cd.cardPool = ItemPool.createFrom(FModel.getMagicDb().getCommonCards().getUniqueCards(), PaperCard.class);
+        } else {
+            // Include Main + all other sections (especially Conspiracy) so conspiracy-type
+            // cards like Backup Plan and Double Stroke are draftable in cube drafts.
+            List<PaperCard> allCards = new ArrayList<>(deckCube.getMain().toFlatList());
+            for (DeckSection section : DeckSection.values()) {
+                if (section == DeckSection.Main) continue;
+                CardPool sectionPool = deckCube.get(section);
+                if (sectionPool != null && !sectionPool.isEmpty()) {
+                    allCards.addAll(sectionPool.toFlatList());
+                }
+            }
+            cd.cardPool = ItemPool.createFrom(allCards, PaperCard.class);
+        }
 
         return cd;
     }

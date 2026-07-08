@@ -2221,6 +2221,9 @@ public class FDeckEditor extends TabPageScreen<FDeckEditor> {
                 return;
             int packNumber = draft.getHumanPlayer().nextChoice().getId();
             String lblPackN = Forge.getLocalizer().getMessage("lblPackN", String.valueOf(packNumber));
+            if (getDraftPlayer().hasCogworkLibrarianAvailable()) {
+                lblPackN = lblPackN + " [Cogwork Librarian active]";
+            }
             caption = lblPackN;
             cardManager.setCaption(lblPackN);
         }
@@ -2356,6 +2359,13 @@ public class FDeckEditor extends TabPageScreen<FDeckEditor> {
                     result -> { //ignore quantity
                         moveCard(card, parentScreen.getSideboardPage());
                     });
+            DraftPack currentPack = getDraftPlayer().nextChoice();
+            if (getDraftPlayer().hasCogworkLibrarianAvailable() && currentPack != null && currentPack.size() > 1) {
+                menu.addItem(new FMenuItem("Pick + Cogwork Librarian (draft extra card)", FSkinImage.PACK, e -> {
+                    getDraftPlayer().cogworkLibrarianActivatedByUI = true;
+                    moveCard(card, destinationPage);
+                }));
+            }
         }
 
         @Override
