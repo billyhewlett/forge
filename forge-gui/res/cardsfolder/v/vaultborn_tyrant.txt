@@ -9,4 +9,5 @@ SVar:DBDraw:DB$ Draw | Defined$ You | NumCards$ 1
 T:Mode$ ChangesZone | Origin$ Battlefield | Destination$ Graveyard | ValidCard$ Card.Self+!token | Execute$ DBCopy | TriggerDescription$ When CARDNAME dies, if it's not a token, create a token that's a copy of it, except it's an artifact in addition to its other types.
 SVar:DBCopy:DB$ CopyPermanent | Defined$ TriggeredCardLKICopy | AddTypes$ Artifact
 DeckHas:Ability$Token & Type$Artifact
+DeckHints:Name$Flash
 Oracle:Trample\nWhenever Vaultborn Tyrant or another creature you control with power 4 or greater enters, you gain 3 life and draw a card.\nWhen Vaultborn Tyrant dies, if it's not a token, create a token that's a copy of it, except it's an artifact in addition to its other types.

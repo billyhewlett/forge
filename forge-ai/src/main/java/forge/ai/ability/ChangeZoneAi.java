@@ -127,6 +127,15 @@ public class ChangeZoneAi extends SpellAbilityAi {
             return true;
         } else if (aiLogic.equals("Pongify")) {
             return SpecialAiLogic.doPongifyLogic(ai, sa);
+        } else if (aiLogic.equals("FlashCheater")) {
+            // Only cast Flash-type effects when there's a high-value creature (CMC >= 7) to cheat in.
+            // Without this check, the AI wastes Flash on cheap creatures and never saves it for Atraxa etc.
+            for (Card c : ai.getCardsIn(ZoneType.Hand)) {
+                if (c.isCreature() && c.getCMC() >= 7) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         return super.checkAiLogic(ai, sa, aiLogic);

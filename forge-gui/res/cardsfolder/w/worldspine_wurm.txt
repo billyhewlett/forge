@@ -8,4 +8,5 @@ T:Mode$ ChangesZone | Origin$ Any | Destination$ Graveyard | ValidCard$ Card.Sel
 SVar:TrigShuffle:DB$ ChangeZone | Origin$ Graveyard | Destination$ Library | Shuffle$ True | Defined$ TriggeredCardLKICopy
 SVar:TrigToken:DB$ Token | TokenAmount$ 3 | TokenScript$ g_5_5_wurm_trample | TokenOwner$ TriggeredCardController
 DeckHas:Ability$Token
+DeckHints:Name$Flash
 Oracle:Trample\nWhen Worldspine Wurm dies, create three 5/5 green Wurm creature tokens with trample.\nWhen Worldspine Wurm is put into a graveyard from anywhere, shuffle it into its owner's library.
