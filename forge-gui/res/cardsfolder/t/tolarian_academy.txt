@@ -6,4 +6,6 @@ SVar:X:Count$Valid Artifact.YouCtrl
 SVar:BuffedBy:Artifact
 AI:RemoveDeck:Random
 DeckNeeds:Type$Artifact
+DeckHints:Name$Candelabra of Tawnos
+SVar:UntapMe:True
 Oracle:{T}: Add {U} for each artifact you control.

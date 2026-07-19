@@ -8,6 +8,8 @@ SVar:Animate2:DB$ Animate | Defined$ Self | Abilities$ ABToken | Duration$ Perma
 SVar:ABToken:AB$ Token | Cost$ 2 T | TokenScript$ c_0_0_a_construct_total_artifacts | SpellDescription$ Create a 0/0 colorless Construct artifact creature token with "This creature gets +1/+1 for each artifact you control."
 SVar:Tutor:DB$ ChangeZone | Origin$ Library | Destination$ Battlefield | ChangeType$ Artifact.ManaCost0,Artifact.ManaCost1 | ChangeNum$ 1 | SpellDescription$ Search your library for an artifact card with mana cost {0} or {1}, put it onto the battlefield, then shuffle.
 SVar:AILandRemovalMinScore:170
+SVar:UntapMe:True
 DeckHas:Ability$Token
 DeckNeeds:Type$Artifact
+DeckHints:Name$Candelabra of Tawnos
 Oracle:(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Urza's Saga gains "{T}: Add {C}."\nII — Urza's Saga gains "{2}, {T}: Create a 0/0 colorless Construct artifact creature token with 'This creature gets +1/+1 for each artifact you control.'"\nIII — Search your library for an artifact card with mana cost {0} or {1}, put it onto the battlefield, then shuffle.
