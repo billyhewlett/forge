@@ -1,7 +1,7 @@
 # AIForge Custom Build Context
 
 This branch (`aiforge-custom`) contains all customizations for the AIForge cube draft APK
-for a Pixel 9 Pro XL. Hand this file to Claude Code on the desktop as starting context.
+for a Pixel 9 Pro XL. Hand this file to Claude Code on desktop or laptop as starting context.
 
 ---
 
@@ -24,7 +24,11 @@ Proclamation, Backup Plan, Double Stroke) and custom cards (Gleemox).
 
 ### Modified card scripts
 - `forge-gui/res/cardsfolder/g/gleemox.txt` — removed `DeckLimit:0` ban
-- `forge-gui/res/cardsfolder/b/booster_tutor.txt` — changed to library search (WORK IN PROGRESS, still buggy — see below)
+- `forge-gui/res/cardsfolder/b/booster_tutor.txt` — Spellbook workaround (see Known Issues)
+
+### Shared signing keystore
+- `forge-gui-android/aiforge.keystore` — PKCS12, alias `androiddebugkey`, pass `android`
+  Both laptop and desktop must sign with this file to allow `adb install -r` upgrades.
 
 ### PR #10292 — Lore Seeker surplus (cube-first booster logic)
 - `forge-core/.../UnOpenedProduct.java` — added `getRemainingCards()`
@@ -39,12 +43,22 @@ Proclamation, Backup Plan, Double Stroke) and custom cards (Gleemox).
   - Critical bug fix: `draftCard()` was returning `true` instead of `return passPack`
 - `forge-gui-mobile/.../FDeckEditor.java`:
   - Shows "[Cogwork Librarian active]" in pack title caption
-  - Adds "Pick + Cogwork Librarian" menu item only when `pack.size() > 1` (guards last-card edge case)
+  - Adds "Pick + Cogwork Librarian" menu item only when `pack.size() > 1`
 - `forge-gui/res/languages/en-US.properties` — added `lblUseCogworkLibrarian` key
 
 ### PR #10372 — Conspiracy cards in draft
-- `forge-gui/.../CustomLimited.java` — merges all DeckSection values (not just Main) into cube pool
+- `forge-gui/.../CustomLimited.java` — merges all DeckSection values into cube pool
 - `forge-gui/.../GauntletMini.java` — calls `pl.assignConspiracies()` before starting match
+
+### AI drafting fix — `AI:RemoveDeck:All` suppression
+- `forge-gui/.../CardRanker.java` line 101:
+  ```java
+  if (card.getRules().getAiHints().getRemAIDecks() && IBoosterDraft.CUSTOM_RANKINGS_FILE[0] == null) {
+  ```
+  Without this fix, any cube card with `AI:RemoveDeck:All` in its card script gets a -20
+  draft score penalty that overrides custom rankings. Flash (ranked #54) was picked lower
+  than blue cards ranked #100+ because of this flag. The fix skips the penalty when a
+  custom rankings file is active.
 
 ### Android build
 - `forge-gui-android/pom.xml` — `skip-d8` profile disables D8 mojo for Windows build
@@ -52,53 +66,157 @@ Proclamation, Backup Plan, Double Stroke) and custom cards (Gleemox).
 
 ---
 
-## Build Pipeline (Windows, this laptop)
+## Build Pipeline (Windows)
+
+Use the script: `forge-gui-android/build-aiforge.ps1`
 
 ```powershell
-# Short-path junctions required (cmd.exe 8191-char D8 limit workaround)
-# C:\f -> C:\Users\billy\Documents\forge
-# C:\m2 -> C:\Users\billy\.m2
-# C:\sdk -> Android SDK
-# C:\jdk -> JDK
-
-# 1. Maven (skip D8)
-mvn -f C:\f\pom.xml -pl forge-gui-android -am clean package -P skip-d8 -DskipTests
-
-# 2. D8 (PowerShell — 32767-char limit)
-# [see previous session for full D8 arg array]
-
-# 3. Sign
-java -jar uber-apk-signer.jar --apks forge-android.apk --debug
-
-# 4. Install
-adb install -r forge-android-debugSigned.apk
+cd C:\Users\billy\Documents\forge\forge-gui-android
+.\build-aiforge.ps1           # full build + install
+.\build-aiforge.ps1 -PushOnly # just push data files (no recompile)
 ```
 
-### Files to push to device after build
+### Manual steps if the script isn't working
+
+**Prerequisites (short-path junctions — cmd.exe 8191-char limit workaround)**
 ```powershell
-adb push forge-gui/res/draft/AIForgeRankings.txt /sdcard/Android/data/forge.app/files/draft/
-adb push forge-gui/res/draft/AIForge.draft /sdcard/Android/data/forge.app/files/draft/
-adb push forge-gui/res/cube/AIForge.dck /sdcard/Android/data/forge.app/files/cube/
-adb push forge-gui/res/cardsfolder/g/gleemox.txt /sdcard/Android/data/forge.app/files/cardsfolder/g/
-adb push forge-gui/res/cardsfolder/b/booster_tutor.txt /sdcard/Android/data/forge.app/files/cardsfolder/b/
+New-Item -ItemType Junction -Path C:\f   -Target C:\Users\billy\Documents\forge
+New-Item -ItemType Junction -Path C:\sdk -Target C:\Users\billy\AppData\Local\Android\Sdk
+New-Item -ItemType Junction -Path C:\jdk -Target "C:\Program Files\Eclipse Adoptium\jdk-..."
 ```
+
+**Step 1 — Maven**
+```powershell
+mvn -f C:\f\pom.xml -pl forge-gui-android -am package -P android-debug,skip-d8 -DskipTests
+```
+Produces `target/*_obfuscated.jar` (~19.5 MB fat-jar) and a base APK shell.
+
+**Step 2 — D8**
+```powershell
+$d8 = @("--release","--min-api","26","--lib","C:\sdk\platforms\android-35\android.jar",
+        "--output","C:\f\forge-gui-android\target",
+        "C:\f\forge-gui-android\target\forge-android-2.0.14-SNAPSHOT-07.19_obfuscated.jar")
+& C:\jdk\bin\java.exe -cp C:\sdk\build-tools\35.0.0\lib\d8.jar com.android.tools.r8.D8 @d8
+```
+
+**Step 3 — Inject DEX**
+```powershell
+cd C:\f\forge-gui-android\target
+Copy-Item forge-android-*.apk forge-android-aiforge.apk
+& C:\jdk\bin\jar.exe uf forge-android-aiforge.apk classes.dex classes2.dex
+```
+
+**Step 4 — Sign**
+```powershell
+& C:\jdk\bin\java.exe -jar C:\Users\billy\Documents\forge\forge-gui-android\tools\uber-apk-signer.jar `
+    --apks forge-android-aiforge.apk `
+    --ks C:\Users\billy\Documents\forge\forge-gui-android\aiforge.keystore `
+    --ksAlias androiddebugkey --ksPass android --ksKeyPass android
+```
+
+**Step 5 — Install**
+```powershell
+adb install -r forge-android-aiforge-aligned-debugSigned.apk
+```
+
+**Step 6 — Push data files**
+```powershell
+$b = "/sdcard/Android/data/forge.app/files"
+adb push forge-gui/res/draft/AIForge.draft             $b/draft/AIForge.draft
+adb push forge-gui/res/draft/AIForgeRankings.txt       $b/draft/AIForgeRankings.txt
+adb push forge-gui/res/cube/AIForge.dck                $b/cube/AIForge.dck
+adb push forge-gui/res/cardsfolder/g/gleemox.txt       $b/cardsfolder/g/gleemox.txt
+adb push forge-gui/res/cardsfolder/b/booster_tutor.txt $b/cardsfolder/b/booster_tutor.txt
+```
+
+---
+
+## Build Gotchas (hard-won lessons)
+
+### 1. Maven profiles: BOTH are required
+- `-P android-debug,skip-d8` — both profiles must be present
+- Without `android-debug`: produces only a small module JAR (~112KB), no APK
+- Without `skip-d8`: Maven's D8 mojo runs (fails or produces stale DEX on Windows)
+
+### 2. D8 must run on the fat-jar, not the module jar
+- Correct input: `*_obfuscated.jar` (~19.5 MB — ProGuard fat-jar with all dependencies)
+- Wrong input: `forge-android-*.jar` without `_obfuscated` suffix (~112 KB module-only jar)
+- With the wrong jar: `classes.dex` is ~98KB. App loads but crashes immediately at startup.
+
+### 3. Use `android-35`, not `android-34`
+- `C:\sdk\platforms\android-35\android.jar` exists
+- `C:\sdk\platforms\android-34\android.jar` does NOT exist on this machine
+
+### 4. Use `jar uf` for DEX injection, NOT .NET ZipFile
+- `.NET System.IO.Compression.ZipFile` / `Compress-Archive` corrupts ZIP extra-field headers
+- zipalign needs these headers to pad entries to 4-byte alignment
+- Symptom 1: `INSTALL_FAILED_CONTAINER_ERROR: Failed to extract native libraries, res=-18`
+- Symptom 2: `Targeting R+ requires resources.arsc stored uncompressed and aligned on 4-byte boundary`
+- Fix: run `jar uf base.apk classes.dex classes2.dex` from the target/ directory (JDK jar tool)
+
+### 5. Signing key compatibility
+- If the device has an APK signed with a different keystore than what you're using now,
+  `adb install -r` fails with `INSTALL_FAILED_UPDATE_INCOMPATIBLE`
+- Fix: `adb uninstall forge.app` (data in `/sdcard/Android/data/forge.app/` is preserved),
+  then `adb install` the new APK
+- Prevention: both laptop and desktop use `aiforge.keystore` from this branch
+
+### 6. uber-apk-signer doesn't follow Windows junctions
+- Running it via `C:\f\forge-gui-android\tools\uber-apk-signer.jar` fails
+- Use the real path: `C:\Users\billy\Documents\forge\forge-gui-android\tools\uber-apk-signer.jar`
+
+### 7. `--no-incremental` flag for ADB debugging
+- If install fails with a cryptic error, add `--no-incremental` to `adb install`
+- Incremental install can mask the true error with a different one
+
+---
+
+## Shared Keystore Setup (for desktop)
+
+The keystore is committed at `forge-gui-android/aiforge.keystore`.
+- Format: PKCS12
+- Alias: `androiddebugkey`
+- Store password: `android`
+- Key password: `android`
+
+To verify on a new machine:
+```powershell
+& C:\jdk\bin\keytool.exe -list -v -keystore forge-gui-android\aiforge.keystore -storepass android
+```
+Expected alias: `androiddebugkey`. If SHA-256 matches the device's installed APK, you can
+use `adb install -r` directly. If it doesn't match, uninstall first.
 
 ---
 
 ## Known Issues / Pending Work
 
 ### Booster Tutor (TABLED — top priority for desktop session)
-- Current implementation in `booster_tutor.txt` uses `ChangeZone` to search own library
-- Bug: shows cards from all players' libraries (non-cube cards appear), not just cube pool
-- **The desktop had a working implementation** — that's the fix to apply here
-- The laptop Claude Code attempted `AllLibraries` param in `MakeCardEffect.java` but it shows non-cube cards
-- Correct behavior: present a selection of cards from the cube's remaining card pool
+- Current `booster_tutor.txt` uses a Spellbook with all 282 main cube cards
+- This is a **workaround** — the proper fix (implemented on desktop) presents 15 random
+  cards from the cube's remaining card pool (cubeSurplus in BoosterDraft.java)
+- When you return to desktop: push the proper implementation to this branch
+- The spellbook approach works but is unwieldy (shows all 282 cards every time)
+- Note: cards with commas in names use semicolons in the Spellbook param
+  (e.g. `Minsc & Boo; Timeless Heroes`)
+
+### Cube cards with `AI:RemoveDeck:All` (post-fix still worth verifying)
+The CardRanker fix suppresses the -20 penalty during custom drafts. However, these cards
+may still have other AI behavior issues (the flag affects gameplay AI, not just drafting).
+Known affected cards in the cube include Flash and Mystic Confluence.
+To find all affected cube cards:
+```powershell
+# Search for AI:RemoveDeck:All in cards that appear in AIForge.dck
+grep -r "AI:RemoveDeck:All" forge-gui/res/cardsfolder/ | grep -f <(cut -d' ' -f2 forge-gui/res/cube/AIForge.dck | tr '[:upper:]' '[:lower:]' | sed 's/ /_/g')
+```
+
+### Flash AI play pattern
+- Flash has `AI:RemoveDeck:All` which signals the AI doesn't know how to play it
+- The draft fix (CardRanker) means AI will now draft Flash, but it may still never cast it
+- Per-card AI hints in card scripts (e.g. `AILogic:Flash` style params) could fix this
+- Approach: whack-a-mole per problematic card
 
 ### Conspiracy cards (believed working, low sample rate)
-- Only 3 conspiracy cards out of 285 total (~1%) — statistically rare to see them
-- Backup Plan: should give extra opening hand option; GauntletMini.assignConspiracies() fix applied
-- Advantageous Proclamation: extra card in deck (20 instead of 15 sideboard limit check bypass)
-- Double Stroke: copies next instant or sorcery
+- Only 3/285 cards (~1%) — statistically rare to see them drafted
 
 ### Oracle of the Alpha
 - Not yet implemented (requires showing 9 power cards for selection)
@@ -106,22 +224,26 @@ adb push forge-gui/res/cardsfolder/b/booster_tutor.txt /sdcard/Android/data/forg
 ---
 
 ## Card Rankings Summary
+- `setSizes.get("CUSTOM")` = 285 (max rank in AIForgeRankings.txt = #285 Outland Liberator)
+- `ReadDraftRankings.getRanking()` returns `rank / maxRank` as float 0–1
+- `CardRanker.getRawScore()` converts to 0–100: `100 - (100 * rkg)`
+- Non-custom cards found in the custom rankings file get `rkg /= 2` boost (half the penalty)
 - #1 Black Lotus, #2 Gleemox, #3 Mox Sapphire ... top 15 are power/moxen/staples
-- #16 Advantageous Proclamation, #26 Backup Plan, #39 Double Stroke (conspiracy cards at power level)
-- #147 Booster Tutor (at Liliana of the Veil's old slot)
-- #284 Lore Seeker, #285 Outland Liberator (bottom)
-- Cogwork Librarian: NOT in rankings (score 0, AI won't pick it)
+- #16 Advantageous Proclamation, #26 Backup Plan, #39 Double Stroke
+- #147 Booster Tutor, #284 Lore Seeker, #285 Outland Liberator
+- Cogwork Librarian: NOT in rankings (getRawScore returns SCORE_UNPICKABLE = -100, AI won't pick)
+- Strip accents when looking up card names: Lórien Revealed → Lorien Revealed (line 78 ReadDraftRankings)
 
 ---
 
 ## AIForge.dck structure
 ```
 [metadata]
-Name:AIForge
+name=AIForge
 
-[main]
-1 Black Lotus
-... (282 cards, no set codes)
+[Main]
+1 Black Lotus|30A
+... (282 cards with set codes, or without for custom cards)
 
 [Conspiracy]
 1 Advantageous Proclamation

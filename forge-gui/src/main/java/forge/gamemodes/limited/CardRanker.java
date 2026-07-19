@@ -98,7 +98,7 @@ public class CardRanker {
 
         for (PaperCard card : cardsInPack) {
             double score = getRawScore(card);
-            if (card.getRules().getAiHints().getRemAIDecks()) {
+            if (card.getRules().getAiHints().getRemAIDecks() && IBoosterDraft.CUSTOM_RANKINGS_FILE[0] == null) {
                 score -= 20.0;
             }
             if (!canAddMoreColors && !card.getRules().getDeckbuildingColors().hasNoColorsExcept(chosenColors)) {
