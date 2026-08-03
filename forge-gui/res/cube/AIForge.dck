@@ -23,7 +23,7 @@ name=AIForge
 1 Eagles of the North|LTR
 1 Elspeth, Storm Slayer|TDM
 1 Path to Exile|ECC
-1 Swords to Plowshares|ICE
+1 Swords to Plowshares|3ED
 1 Get Lost|LCI
 1 Reprieve|LTR
 1 Oust|CLU
@@ -48,7 +48,7 @@ name=AIForge
 1 Occult Epiphany|VOC
 1 Spell Pierce|DFT
 1 Counterspell|SLD
-1 Flash|A25
+1 Flash|MIR
 1 Mana Drain|LEG
 1 Mana Leak|STH
 1 Memory Lapse|HML
@@ -86,9 +86,9 @@ name=AIForge
 1 Sheoldred's Edict|PLST
 1 Dismember|NPH
 1 Snuff Out|MMQ
-1 Duress|ONE
+1 Duress|USG
 1 Mind Twist|4ED
-1 Reanimate|BBD
+1 Reanimate|UMA
 1 Thoughtseize|THS
 1 Demonic Tutor|3ED
 1 Toxic Deluge|MH3
@@ -188,7 +188,7 @@ name=AIForge
 1 Mana Vault|30A
 1 Retrofitter Foundry|C18
 1 Sensei's Divining Top|MB2
-1 Skullclamp|TDC
+1 Skullclamp|DST
 1 Sol Ring|4ED
 1 Soul-Guide Lantern|THB
 1 Grim Monolith|ULG
