@@ -45,8 +45,76 @@ public class UntapAi extends SpellAbilityAi {
             // In the future if you want to give Pseudo vigilance to a creature you attacked with
             // activate during your own during the end of combat step
         }
+        if ("CandelabraAI".equals(aiLogic)) {
+            return doCandelabraLogic(ai, sa);
+        }
 
         return super.checkAiLogic(ai, sa, aiLogic);
+    }
+
+    /**
+     * AI logic for Candelabra of Tawnos: activate only when untapping a priority land
+     * (marked UntapMe:True) produces strictly more mana than the activation cost (1),
+     * or when Urza's Saga's Construct ability can fire a second time.
+     *
+     * This correctly rejects activation when Tolarian Academy is the AI's only artifact
+     * (produces 1 blue = break-even) and accepts it when there are 2+ artifacts (produces 2+).
+     *
+     * Mana filtering (using Workshop/Mightstone mana to untap unrestricted lands) is not
+     * yet implemented here — that requires overriding target selection based on restricted
+     * floating mana, which is a separate concern.
+     */
+    private boolean doCandelabraLogic(final Player ai, final SpellAbility sa) {
+        final PhaseHandler ph = ai.getGame().getPhaseHandler();
+
+        // Only fire on AI's own main phases or at the end of the opponent's turn
+        boolean onOwnMainPhase = ph.isPlayerTurn(ai) && !ph.getPhase().isAfter(PhaseType.MAIN2);
+        boolean atOppEndStep = ph.getNextTurn() == ai
+                && ph.getPhase().isAfter(PhaseType.COMBAT_DECLARE_BLOCKERS);
+        if (!onOwnMainPhase && !atOppEndStep) {
+            return false;
+        }
+
+        for (Card land : ai.getLandsInPlay()) {
+            if (!land.isTapped()) {
+                continue;
+            }
+            if (!"True".equals(land.getSVar("UntapMe"))) {
+                continue;
+            }
+            if (isUntapProfitable(land)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if untapping this land and tapping it again yields a net mana gain
+     * (i.e., the land's tap output exceeds the 1-mana Candelabra activation cost).
+     *
+     * Also returns true for Urza's Saga when the Construct token ability is available,
+     * because a second Construct is high-value even though the mana output is only 1 colorless.
+     */
+    private static boolean isUntapProfitable(final Card land) {
+        for (SpellAbility manaAb : land.getManaAbilities()) {
+            int production = AbilityUtils.calculateAmount(land,
+                    manaAb.getParamOrDefault("Amount", "1"), manaAb);
+            if (production >= 2) {
+                return true;
+            }
+        }
+        // Urza's Saga: Chapter II grants "{2},{T}: Create a Construct token" — not a mana ability,
+        // but worth untapping for regardless of mana production.
+        if ("Urza's Saga".equals(land.getName())) {
+            for (SpellAbility ab : land.getAllSpellAbilities()) {
+                Cost cost = ab.getPayCosts();
+                if (cost != null && cost.hasTapCost() && !ab.isManaAbility()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

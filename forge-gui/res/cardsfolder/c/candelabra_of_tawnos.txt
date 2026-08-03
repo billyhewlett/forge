@@ -1,7 +1,7 @@
 Name:Candelabra of Tawnos
 ManaCost:1
 Types:Artifact
-A:AB$ Untap | Cost$ X T | TargetMin$ X | TargetMax$ X | ValidTgts$ Land | TgtPrompt$ Select X target lands | AILogic$ PoolExtraMana | SpellDescription$ Untap X target lands.
+A:AB$ Untap | Cost$ X T | TargetMin$ X | TargetMax$ X | ValidTgts$ Land | TgtPrompt$ Select X target lands | AILogic$ CandelabraAI | SpellDescription$ Untap X target lands.
 SVar:X:Count$xPaid
 DeckNeeds:Name$Tolarian Academy|Mishra's Workshop|Urza's Saga
 DeckHints:Name$Tolarian Academy|Mishra's Workshop|Urza's Saga

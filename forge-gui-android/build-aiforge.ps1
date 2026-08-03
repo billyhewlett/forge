@@ -29,19 +29,45 @@ $D8_JAR      = "$SDK\build-tools\35.0.0\lib\d8.jar"
 function Step($msg) { Write-Host "`n=== $msg ===" -ForegroundColor Cyan }
 
 function Push-Data {
-    $base = "/sdcard/Android/data/forge.app/files"
+    # Forge on Android 11+ (SDK > 30) reads data from getObbDir()+"/Forge/", which is
+    # /sdcard/Android/obb/forge.app/Forge/ — NOT /sdcard/Android/data/forge.app/files/
+    $base = "/sdcard/Android/obb/forge.app/Forge/res"
     $res  = "$FORGE\forge-gui\res"
+
+    # Plain file pushes (cube/draft data)
     $files = @(
-        @{ from="$res\draft\AIForge.draft";             to="$base/draft/AIForge.draft" },
-        @{ from="$res\draft\AIForgeRankings.txt";       to="$base/draft/AIForgeRankings.txt" },
-        @{ from="$res\cube\AIForge.dck";                to="$base/cube/AIForge.dck" },
-        @{ from="$res\cardsfolder\g\gleemox.txt";       to="$base/cardsfolder/g/gleemox.txt" },
-        @{ from="$res\cardsfolder\b\booster_tutor.txt"; to="$base/cardsfolder/b/booster_tutor.txt" }
+        @{ from="$res\draft\AIForge.draft";       to="$base/draft/AIForge.draft" },
+        @{ from="$res\draft\AIForgeRankings.txt"; to="$base/draft/AIForgeRankings.txt" },
+        @{ from="$res\cube\AIForge.dck";          to="$base/cube/AIForge.dck" }
     )
     foreach ($f in $files) {
         $r = adb push $f.from $f.to 2>&1 | Select-Object -Last 1
         Write-Host "  $($f.to.Split('/')[-1]): $r"
     }
+
+    # Card-script overrides: card scripts live inside cardsfolder.zip on device.
+    # Pull zip, patch entries with jar uf (NOT .NET ZipFile — that corrupts extra-field headers),
+    # push back. Add any custom/fixed card scripts to $cardOverrides.
+    $cardOverrides = @(
+        @{ path="g"; name="gleemox.txt" },       # DeckLimit:0 removed — allows cube use
+        @{ path="b"; name="booster_tutor.txt" }  # custom Booster Tutor logic
+    )
+    $tmp = "$env:TEMP\forge-cardsfix"
+    New-Item -ItemType Directory -Force $tmp | Out-Null
+    $zipLocal = "$tmp\cardsfolder.zip"
+    Write-Host "  Pulling cardsfolder.zip..."
+    adb pull "$base/cardsfolder/cardsfolder.zip" $zipLocal 2>&1 | Out-Null
+    foreach ($c in $cardOverrides) {
+        $dir = "$tmp\$($c.path)"; New-Item -ItemType Directory -Force $dir | Out-Null
+        Copy-Item "$res\cardsfolder\$($c.path)\$($c.name)" "$dir\$($c.name)"
+        Push-Location $tmp
+        & "$JDK\bin\jar.exe" uf $zipLocal "$($c.path)/$($c.name)"
+        Pop-Location
+        Write-Host "  Patched $($c.name) into zip"
+    }
+    Write-Host "  Pushing patched cardsfolder.zip..."
+    adb push $zipLocal "$base/cardsfolder/cardsfolder.zip" 2>&1 | Select-Object -Last 1
+    Remove-Item -Recurse -Force $tmp
 }
 
 # ── 0. Push-only shortcut ───────────────────────────────────────────────────
@@ -57,7 +83,10 @@ Step "Maven build (android-debug + skip-d8)"
 # skip-d8        → disables D8 mojo so we run D8 ourselves below
 # Both profiles are REQUIRED. Without android-debug: small module JAR (~112KB), no APK.
 # Without skip-d8: Maven tries to run D8 itself (fails or produces wrong output on Windows).
-& mvn -f "$FORGE\pom.xml" -pl forge-gui-android -am package `
+# -s: resolve local-settings.xml with absolute path (relative path in .mvn/maven.config
+#     breaks when Maven is invoked from a directory other than the project root)
+& mvn -f "$FORGE\pom.xml" -s "$FORGE\.mvn\local-settings.xml" `
+    -pl forge-gui-android -am package `
     -P android-debug,skip-d8 -DskipTests -q
 if ($LASTEXITCODE -ne 0) { throw "Maven failed" }
 
@@ -119,11 +148,10 @@ if (-not (Test-Path $realSigner)) { $realSigner = $SIGNER }   # try junction pat
     --ksKeyPass $KS_PASS 2>&1 | Select-Object -Last 6
 if ($LASTEXITCODE -ne 0) { throw "Signing failed" }
 
-$signedApk = "$TARGET\forge-android-aiforge-aligned-debugSigned.apk"
-if (-not (Test-Path $signedApk)) {
-    $signedApk = Get-ChildItem "$TARGET\forge-android-aiforge*Signed.apk" |
-        Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
-}
+# uber-apk-signer names output: <base>-signed-aligned.apk (lower-case, no "debug" prefix)
+$signedApk = Get-ChildItem "$TARGET\forge-android-aiforge*signed*.apk" |
+    Where-Object { $_.Name -notlike "*.idsig" } |
+    Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
 Write-Host "Signed APK: $signedApk"
 
 # ── 5. Install ───────────────────────────────────────────────────────────────

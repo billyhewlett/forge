@@ -32,7 +32,8 @@
 #32|Hullbreacher|C|CUSTOM
 #33|Strip Mine|C|CUSTOM
 #34|Oko, Thief of Crowns|C|CUSTOM
-#35|Fable of the Mirror-Breaker|C|CUSTOM
+#35|Cogwork Librarian|C|CUSTOM
+#36|Fable of the Mirror-Breaker|C|CUSTOM
 #36|Vampiric Tutor|C|CUSTOM
 #37|Grim Monolith|C|CUSTOM
 #38|Scalding Tarn|C|CUSTOM
