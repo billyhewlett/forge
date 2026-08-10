@@ -130,17 +130,12 @@ public class CustomLimited extends DeckBase {
         if (deckCube == null) {
             cd.cardPool = ItemPool.createFrom(FModel.getMagicDb().getCommonCards().getUniqueCards(), PaperCard.class);
         } else {
-            // Include Main + all other sections (especially Conspiracy) so conspiracy-type
-            // cards like Backup Plan and Double Stroke are draftable in cube drafts.
-            List<PaperCard> allCards = new ArrayList<>(deckCube.getMain().toFlatList());
-            for (DeckSection section : DeckSection.values()) {
-                if (section == DeckSection.Main) continue;
-                CardPool sectionPool = deckCube.get(section);
-                if (sectionPool != null && !sectionPool.isEmpty()) {
-                    allCards.addAll(sectionPool.toFlatList());
-                }
+            // Include conspiracy cards (e.g. Backup Plan) in the draft pool alongside regular cards
+            CardPool pool = new CardPool(deckCube.getMain());
+            if (deckCube.has(DeckSection.Conspiracy)) {
+                pool.addAll(deckCube.get(DeckSection.Conspiracy));
             }
-            cd.cardPool = ItemPool.createFrom(allCards, PaperCard.class);
+            cd.cardPool = pool;
         }
 
         return cd;

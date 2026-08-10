@@ -131,7 +131,7 @@ public class CardFactoryUtil {
         if (!cost.isOnlyManaCost()) {
             sbCost.append(" — ");
         }
-        sbCost.append(cost.toString());
+        sbCost.append(cost);
 
         // Cost need to be set later
         StringBuilder sb = new StringBuilder();
@@ -637,6 +637,30 @@ public class CardFactoryUtil {
 
                 final Trigger trigger = TriggerHandler.parseTrigger(trig, card, intrinsic);
                 trigger.setOverridingAbility(AbilityFactory.getAbility(effect, card));
+
+                inst.addTrigger(trigger);
+            }
+        } else if (keyword.equals("Storied")) {
+            // Storied trigger only for Permanent, as with Ascend
+            if (card.isPermanent()) {
+                final String trig = "Mode$ Always | TriggerZones$ Battlefield"
+                        + " | Secondary$ True | Static$ True | EnduringStory$ False"
+                        + " | IsPresent$ Permanent.YouCtrl+Historic | PresentCompare$ GE3"
+                        + " | TriggerDescription$ Storied (" + inst.getReminderText() + ")";
+
+                final Trigger trigger = TriggerHandler.parseTrigger(trig, card, intrinsic);
+                final SpellAbility gainStory = new AbilityStatic(card, Cost.Zero, null) {
+                    @Override
+                    public void resolve() {
+                        final Player p = getActivatingPlayer();
+                        if (p != null && p.isInGame()) {
+                            p.setEnduringStory(true, getOriginalHost().getSetCode());
+                        }
+                    }
+                };
+                // as AbilityFactory would have done, so getOriginalHost resolves on a copied trait
+                gainStory.setCardState(card.getCurrentState());
+                trigger.setOverridingAbility(gainStory);
 
                 inst.addTrigger(trigger);
             }
@@ -2912,10 +2936,7 @@ public class CardFactoryUtil {
             } else {
                 sb.append(" ");
             }
-            // don't use SimpleString there because it does has "and" between cost i don't want that
-            costStr = cost.toString();
-            // but now it has ": " at the end i want to remove
-            sb.append("| CostDesc$ ").append(costStr, 0, costStr.length() - 2);
+            sb.append("| CostDesc$ ").append(cost);
             if (!cost.isOnlyManaCost()) {
                 sb.append(".");
             }

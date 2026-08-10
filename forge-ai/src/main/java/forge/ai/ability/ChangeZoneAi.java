@@ -2,6 +2,8 @@ package forge.ai.ability;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multiset;
+
 import forge.ai.*;
 import forge.card.CardType;
 import forge.card.MagicColor;
@@ -486,7 +488,7 @@ public class ChangeZoneAi extends SpellAbilityAi {
 
         Iterable<Player> pDefined;
         final TargetRestrictions tgt = sa.getTargetRestrictions();
-        if ((tgt != null) && tgt.canTgtPlayer()) {
+        if (tgt != null && tgt.canTgtPlayer()) {
             final Player opp = AiAttackController.choosePreferredDefenderPlayer(ai);
             if (sa.isCurse()) {
                 if (sa.canTarget(opp)) {
@@ -612,6 +614,18 @@ public class ChangeZoneAi extends SpellAbilityAi {
                    return c;
             }
             return null;
+        }
+
+        if (ai.getTurn() <= 3) {
+            int manaSources = ComputerUtilMana.getAvailableManaEstimate(ai, false);
+            if (CardLists.count(ai.getCardsIn(ZoneType.Hand), CardPredicates.LANDS_PRODUCING_MANA) > 0) {
+                manaSources++;
+            }
+            final int nearTermMana = manaSources + 1;
+            CardCollection nearTerm = CardLists.filter(list, c -> c.getCMC() <= nearTermMana);
+            if (!nearTerm.isEmpty()) {
+                return ComputerUtilCard.getBestCreatureAI(nearTerm);
+            }
         }
 
         // not urgent, get the largest creature possible
@@ -1289,13 +1303,11 @@ public class ChangeZoneAi extends SpellAbilityAi {
                         }
                     }
                 }
-                Map<CounterType, Integer> counters = c.getCounters();
-                for (CounterType ct : counters.keySet()) {
-                    int amount = counters.get(ct);
-                    if (ComputerUtil.isNegativeCounter(ct, c)) {
-                        numNegativeCounters += amount;
+                for (Multiset.Entry<CounterType> e : c.getCounters().entrySet()) {
+                    if (ComputerUtil.isNegativeCounter(e.getElement(), c)) {
+                        numNegativeCounters += e.getCount();
                     }
-                    numTotalCounters += amount;
+                    numTotalCounters += e.getCount();
                 }
                 if (hasValuableAttachments || (ComputerUtilCard.isUselessCreature(ai, c) && !hasOppAttachments)) {
                     continue;
@@ -1466,7 +1478,7 @@ public class ChangeZoneAi extends SpellAbilityAi {
         // Focus on the keycards I don't already have access to
         if (destination.equals(ZoneType.Battlefield) || destination.equals(ZoneType.Hand) ||
                 (destination.equals(ZoneType.Library) && "0".equals(position))) {
-            for (Card c : player.getCardsIn(Lists.newArrayList(ZoneType.Hand, ZoneType.Battlefield))) {
+            for (Card c : player.getCardsIn(ZoneType.Hand, ZoneType.Battlefield)) {
                 keyCards.remove(c.getName());
             }
         }
