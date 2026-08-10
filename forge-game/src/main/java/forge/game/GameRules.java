@@ -1,6 +1,9 @@
 package forge.game;
 
+import forge.item.PaperCard;
+
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 public class GameRules {
@@ -24,6 +27,9 @@ public class GameRules {
 
     // whether to warn about cards AI can't play well
     private boolean warnAboutAICards = true;
+
+    // Optional cube card pool for Booster Tutor in cube draft games
+    private List<PaperCard> cubeCardPool = null;
 
     public GameRules(final GameType type) {
         this.gameType = type;
@@ -148,5 +154,12 @@ public class GameRules {
 
     public void setSimTimeout(final int duration) {
         this.simTimeout = duration;
+    }
+
+    public List<PaperCard> getCubeCardPool() {
+        return cubeCardPool;
+    }
+    public void setCubeCardPool(final List<PaperCard> pool) {
+        this.cubeCardPool = pool;
     }
 }

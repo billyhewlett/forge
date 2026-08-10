@@ -17,6 +17,7 @@ import forge.gui.SOverlayUtils;
 import forge.gui.UiCommand;
 import forge.gui.framework.FScreen;
 import forge.gui.framework.ICDoc;
+import forge.item.PaperCard;
 import forge.itemmanager.ItemManagerConfig;
 import forge.localinstance.properties.ForgePreferences.FPref;
 import forge.model.FModel;
@@ -192,8 +193,17 @@ public enum CSubmenuDraft implements ICDoc {
             aiPlayer.assignConspiracies();
         }
 
+        List<PaperCard> cubePool = null;
+        final String cubeName = humanDeck.getDeck().getDraftNotes().get("cube");
+        if (cubeName != null) {
+            final Deck cubeDeck = FModel.getDecks().getCubes().get(cubeName);
+            if (cubeDeck != null) {
+                cubePool = cubeDeck.getMain().toFlatList();
+            }
+        }
+
         final HostedMatch hostedMatch = GuiBase.getInterface().hostMatch();
-        hostedMatch.startMatch(GameType.Draft, null, starter, human, GuiBase.getInterface().getNewGuiGame());
+        hostedMatch.startMatch(GameType.Draft, null, starter, human, GuiBase.getInterface().getNewGuiGame(), cubePool);
 
         SwingUtilities.invokeLater(SOverlayUtils::hideOverlay);
     }

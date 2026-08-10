@@ -20,6 +20,7 @@ import forge.game.player.PlayerView;
 import forge.game.player.RegisteredPlayer;
 import forge.gamemodes.net.NetworkGameEventListener;
 import forge.gamemodes.net.server.FServerManager;
+import forge.item.PaperCard;
 import forge.gamemodes.quest.QuestController;
 import forge.gui.FThreads;
 import forge.gui.GuiBase;
@@ -102,6 +103,11 @@ public class HostedMatch {
 
     public void startMatch(final GameType gameType, final Set<GameType> appliedVariants, final List<RegisteredPlayer> players, final RegisteredPlayer human, final IGuiGame gui) {
         startMatch(getDefaultRules(gameType), appliedVariants, players, human, gui);
+    }
+    public void startMatch(final GameType gameType, final Set<GameType> appliedVariants, final List<RegisteredPlayer> players, final RegisteredPlayer human, final IGuiGame gui, final List<PaperCard> cubeCardPool) {
+        final GameRules rules = getDefaultRules(gameType);
+        rules.setCubeCardPool(cubeCardPool);
+        startMatch(rules, appliedVariants, players, human, gui);
     }
     public void startMatch(final GameType gameType, final Set<GameType> appliedVariants, final List<RegisteredPlayer> players, final Map<RegisteredPlayer, IGuiGame> guis) {
         startMatch(getDefaultRules(gameType), appliedVariants, players, guis, null);

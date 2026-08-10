@@ -80,24 +80,22 @@ public class MakeCardEffect extends SpellAbilityEffect {
             } else if (sa.hasParam("Choices")) {
                 faces.addAll(parseFaces(sa, "Choices"));
             } else if (sa.hasParam("Booster")) {
-                SealedTemplate booster = Aggregates.random(StaticData.instance().getBoosters());
-                pack = new BoosterPack(booster.getEdition(), booster).getCards();
+                List<PaperCard> cubePool = game.getMatch().getRules().getCubeCardPool();
+                if (cubePool != null && !cubePool.isEmpty()) {
+                    pack = new ArrayList<>();
+                    for (int i = 0; i < 15; i++) {
+                        pack.add(Aggregates.random(cubePool));
+                    }
+                } else {
+                    SealedTemplate booster = Aggregates.random(StaticData.instance().getBoosters());
+                    pack = new BoosterPack(booster.getEdition(), booster).getCards();
+                }
                 for (PaperCard pc : pack) {
                     ICardFace face = pc.getRules().getMainPart();
                     if (face != null)
                         faces.add(face);
                     else
                         throw new RuntimeException("MakeCardEffect didn't find card face by name: " + pc);
-                }
-            } else if (sa.hasParam("AllLibraries")) {
-                // Collect cards from all players' libraries (used by Booster Tutor in cube drafts)
-                for (Player p : game.getPlayers()) {
-                    for (forge.game.card.Card c : p.getZone(ZoneType.Library)) {
-                        if (c.getPaperCard() != null && c.getPaperCard().getRules() != null) {
-                            ICardFace face = c.getPaperCard().getRules().getMainPart();
-                            if (face != null) faces.add(face);
-                        }
-                    }
                 }
             }
 

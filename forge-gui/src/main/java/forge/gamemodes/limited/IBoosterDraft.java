@@ -52,6 +52,8 @@ public interface IBoosterDraft {
 
     default DraftPack addBooster() { return null; }
 
+    default String getCubeName() { return null; }
+
     Deck[] getComputerDecks(); // size 7, all the computers decks
     LimitedPlayer[] getOpposingPlayers(); // size 7, all the computers
     LimitedPlayer getHumanPlayer();

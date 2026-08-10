@@ -25,6 +25,7 @@ import forge.game.GameType;
 import forge.game.player.RegisteredPlayer;
 import forge.gamemodes.match.HostedMatch;
 import forge.gui.GuiBase;
+import forge.item.PaperCard;
 import forge.model.FModel;
 import forge.player.GamePlayerUtil;
 import forge.util.Aggregates;
@@ -143,8 +144,17 @@ public class GauntletMini {
             pl.assignConspiracies();
         }
 
+        List<PaperCard> cubePool = null;
+        final String cubeName = humanDeck.getDraftNotes().get("cube");
+        if (cubeName != null) {
+            final Deck cubeDeck = FModel.getDecks().getCubes().get(cubeName);
+            if (cubeDeck != null) {
+                cubePool = cubeDeck.getMain().toFlatList();
+            }
+        }
+
         hostedMatch = GuiBase.getInterface().hostMatch();
-        hostedMatch.startMatch(gauntletType, null, starter, human, GuiBase.getInterface().getNewGuiGame());
+        hostedMatch.startMatch(gauntletType, null, starter, human, GuiBase.getInterface().getNewGuiGame(), cubePool);
     }
 
     /**

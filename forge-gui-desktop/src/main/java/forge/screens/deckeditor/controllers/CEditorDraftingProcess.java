@@ -284,6 +284,9 @@ public class CEditorDraftingProcess extends ACEditorBase<PaperCard, DeckGroup> i
         }
 
         humanDeck.setDraftNotes(player.getSerializedDraftNotes());
+        if (boosterDraft.getCubeName() != null) {
+            humanDeck.getDraftNotes().put("cube", boosterDraft.getCubeName());
+        }
         finishedDraft.setHumanDeck(humanDeck);
         finishedDraft.addAiDecks(computer);
 

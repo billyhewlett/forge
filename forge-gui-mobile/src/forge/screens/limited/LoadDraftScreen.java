@@ -19,6 +19,7 @@ import forge.gamemodes.match.HostedMatch;
 import forge.gui.FThreads;
 import forge.gui.GuiBase;
 import forge.gui.util.SGuiChoose;
+import forge.item.PaperCard;
 import forge.util.GuiPrefBinders;
 import forge.itemmanager.DeckManager;
 import forge.itemmanager.ItemManagerConfig;
@@ -166,9 +167,18 @@ public class LoadDraftScreen extends LaunchScreen {
                         pl.assignConspiracies();
                     }
 
+                    List<PaperCard> cubePool = null;
+                    final String cubeName = humanDeck.getDeck().getDraftNotes().get("cube");
+                    if (cubeName != null) {
+                        final Deck cubeDeck = FModel.getDecks().getCubes().get(cubeName);
+                        if (cubeDeck != null) {
+                            cubePool = cubeDeck.getMain().toFlatList();
+                        }
+                    }
+
                     FModel.getGauntletMini().resetGauntletDraft();
                     final HostedMatch hostedMatch = GuiBase.getInterface().hostMatch();
-                    hostedMatch.startMatch(GameType.Draft, null, starter, human, GuiBase.getInterface().getNewGuiGame());
+                    hostedMatch.startMatch(GameType.Draft, null, starter, human, GuiBase.getInterface().getNewGuiGame(), cubePool);
                 }));
             }
         });

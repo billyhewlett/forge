@@ -66,6 +66,7 @@ public class BoosterDraft implements IBoosterDraft {
     private boolean shouldShowDraftLog = false;
     private boolean forNetwork = false;
     private String productName;
+    private String cubeName;
 
     private DraftOptions.DoublePick doublePickDuringDraft;
     protected int nextBoosterGroup = 0;
@@ -420,6 +421,11 @@ public class BoosterDraft implements IBoosterDraft {
         return productName;
     }
 
+    @Override
+    public String getCubeName() {
+        return cubeName;
+    }
+
     public int getPodSize() {
         return this.podSize;
     }
@@ -455,6 +461,7 @@ public class BoosterDraft implements IBoosterDraft {
     }
 
     private void setupCustomDraft(final CustomLimited draft) {
+        this.cubeName = draft.getCubeName();
         final ItemPool<PaperCard> dPool = draft.getCardPool();
         if (dPool == null) {
             throw new RuntimeException("BoosterGenerator : deck not found");

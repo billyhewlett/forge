@@ -110,7 +110,11 @@ public class DraftingProcessScreen extends FDeckEditor {
         final Deck[] computer = draft.getComputerDecks();
 
         final DeckGroup finishedDraft = new DeckGroup(name);
-        finishedDraft.setHumanDeck((Deck) getDeck().copyTo(name));
+        Deck humanDeck = (Deck) getDeck().copyTo(name);
+        if (draft.getCubeName() != null) {
+            humanDeck.getDraftNotes().put("cube", draft.getCubeName());
+        }
+        finishedDraft.setHumanDeck(humanDeck);
         finishedDraft.addAiDecks(computer);
 
         if(!isQuestDraft()) {

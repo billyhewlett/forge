@@ -90,6 +90,10 @@ public class CustomLimited extends DeckBase {
         return this.getName();
     }
 
+    public String getCubeName() {
+        return this.getName();
+    }
+
     @Override
     public String getItemType() {
         return "Limited deck";
