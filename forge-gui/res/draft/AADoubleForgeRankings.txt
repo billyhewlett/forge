@@ -282,7 +282,7 @@
 #282|Undercity Sewers|C|CUSTOM
 #283|Thundering Falls|C|CUSTOM
 #284|Questing Beast|C|CUSTOM
-#285|Palantír of Orthanc|C|CUSTOM
+#285|The Fantasticar|C|CUSTOM
 #286|Trinket Mage|C|CUSTOM
 #287|Shallow Grave|C|CUSTOM
 #288|Six|C|CUSTOM
