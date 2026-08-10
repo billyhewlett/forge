@@ -148,7 +148,7 @@ public class ForgePreferences extends AbstractPreferences<ForgePreferences.FPref
         UI_CARD_COUNTER_DISPLAY_TYPE(ForgeConstants.CounterDisplayType.TEXT.getName()),
         UI_CARD_COUNTER_DISPLAY_LOCATION(ForgeConstants.CounterDisplayLocation.TOP.getName()),
         UI_LOAD_NONLEGAL_CARDS("true"),
-        ALLOW_CUSTOM_CARDS_IN_DECKS_CONFORMANCE("false"),
+        ALLOW_CUSTOM_CARDS_IN_DECKS_CONFORMANCE("true"),
         UI_ALLOW_ORDER_GRAVEYARD_WHEN_NEEDED ("Never"),
         UI_DEFAULT_FONT_SIZE("12"),
         UI_CARD_ART_FORMAT("Full"),
