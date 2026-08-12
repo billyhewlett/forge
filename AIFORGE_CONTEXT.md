@@ -169,6 +169,23 @@ adb push forge-gui/res/cardsfolder/b/booster_tutor.txt $b/cardsfolder/b/booster_
 - If install fails with a cryptic error, add `--no-incremental` to `adb install`
 - Incremental install can mask the true error with a different one
 
+### 8. Flavor-named cube cards silently get a 0/unpickable rating
+- A card added to `AIForge.dck` under a flavor name (needed there so Forge picks the
+  right printing/art, e.g. LTC's "White Tower of Ecthelion" for the real card
+  "Karakas") will draft fine but always show up with a broken/near-zero rating.
+- Root cause: `card.getName()` in Java always returns the true Oracle `Name:` from
+  the card's script, never the flavor name — so a rankings entry written under the
+  flavor name never matches at lookup time (`CardRanker.getRawScore()` falls through
+  to `SCORE_UNPICKABLE`).
+- Detection: for every cube card name, check it has a direct `Name:` match somewhere
+  under `forge-gui/res/cardsfolder/` — no match means it's either a flavor name or an
+  unimplemented card.
+- Fix: `Downloads\rerank.py` now has a `FLAVOR_NAMES` dict at the top (key = name as
+  it appears in the CubeCobra `.dck` export, value = the card's real `Name:`) that
+  translates automatically for both 17lands matching and the final rankings output.
+  Add new entries there as they're discovered — this will keep happening as the cube
+  gets more cards from Commander/Secret Lair products with reskinned reprints.
+
 ---
 
 ## Shared Keystore Setup (for desktop)
