@@ -8,14 +8,14 @@
 #8|Parallax Wave|C|CUSTOM
 #9|Ocelot Pride|C|CUSTOM
 #10|Sanguine Evangelist|C|CUSTOM
-#11|Sol Ring|C|CUSTOM
-#12|Mox Pearl|C|CUSTOM
-#13|Mana Crypt|C|CUSTOM
-#14|Phlage, Titan of Fire's Fury|C|CUSTOM
-#15|Mox Ruby|C|CUSTOM
-#16|Sage of the Skies|C|CUSTOM
-#17|Mox Sapphire|C|CUSTOM
-#18|White Tower of Ecthelion|C|CUSTOM
+#11|Karakas|C|CUSTOM
+#12|Sol Ring|C|CUSTOM
+#13|Mox Pearl|C|CUSTOM
+#14|Mana Crypt|C|CUSTOM
+#15|Phlage, Titan of Fire's Fury|C|CUSTOM
+#16|Mox Ruby|C|CUSTOM
+#17|Sage of the Skies|C|CUSTOM
+#18|Mox Sapphire|C|CUSTOM
 #19|White Plume Adventurer|C|CUSTOM
 #20|Phelia, Exuberant Shepherd|C|CUSTOM
 #21|Tolarian Academy|C|CUSTOM
