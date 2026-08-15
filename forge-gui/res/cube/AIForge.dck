@@ -1,15 +1,15 @@
 [metadata]
 name=AIForge
 [Main]
-1 Outland Liberator|DBL
-1 Birds of Paradise|SLD
-1 Blood Crypt|ECL
-1 Hallowed Fountain|ECL
+1 Outland Liberator|MID
+1 Birds of Paradise|4ED
+1 Blood Crypt|DIS
+1 Hallowed Fountain|DIS
 1 Lore Seeker|CNS
 1 Overgrown Tomb|ECL
 1 Pillage the Bog|OTJ
-1 Steam Vents|ECL
-1 Temple Garden|ECL
+1 Steam Vents|GPT
+1 Temple Garden|RAV
 1 Cathar Commando|INR
 1 Caustic Bronco|OTJ
 1 Cogwork Librarian|PLST
@@ -18,29 +18,29 @@ name=AIForge
 1 Oath of Druids|MB2
 1 Shadowy Backstreet|MKM
 1 Sunfall|MOM
-1 Tendrils of Agony|SLD
+1 Tendrils of Agony|SCG
 1 Commercial District|MKM
 1 Council's Judgment|OTC
 1 Death-Greeter's Champion|MOC
 1 Eagles of the North|LTR
 1 Elegant Parlor|MKM
-1 Elite Spellbinder|SLC
-1 Fallen Shinobi|OTC
+1 Elite Spellbinder|STX
+1 Fallen Shinobi|MH1
 1 Generous Ent|LTR
 1 Generous Plunderer|BIG
-1 Goblin Bombardment|SLD
-1 Goblin Welder|SLD
+1 Goblin Bombardment|TMP
+1 Goblin Welder|ULG
 1 Godless Shrine|EOE
 1 Kaldra Compleat|CMM
 1 Lingering Souls|TDC
-1 Questing Beast|SLC
+1 Questing Beast|ELD
 1 Sage of the Skies|TDM
 1 Sanguine Evangelist|LCI
 1 Screaming Nemesis|DSK
 1 Seasoned Pyromancer|2X2
 1 Super Shredder|TMT
 1 Tamiyo, Collector of Tales|PLST
-1 Thalia, Guardian of Thraben|DBL
+1 Thalia, Guardian of Thraben|DKA
 1 The Ooze|TMT
 1 Underground Mortuary|MKM
 1 Ursine Monstrosity|DSC
@@ -52,20 +52,20 @@ name=AIForge
 1 Chaos Defiler|40K
 1 Containment Priest|MB2
 1 Coveted Jewel|BLC
-1 Eternal Witness|CMM
+1 Eternal Witness|5DN
 1 Fanatic of Rhonas|MH3
-1 Fire Covenant|ECC
+1 Fire Covenant|ICE
 1 From the Catacombs|CLB
 1 Get Lost|LCI
 1 Headliner Scarlett|CLU
 1 Hedge Maze|MKM
-1 Karn, Scion of Urza|SLD
+1 Karn, Scion of Urza|DOM
 1 Legion Extruder|BIG
 1 Luminarch Aspirant|NCC
 1 Magda, Brazen Outlaw|PLST
 1 Mawloc|40K
 1 Meticulous Archive|MKM
-1 Pentad Prism|EOC
+1 Pentad Prism|5DN
 1 Pyrokinesis|PLST
 1 Raucous Theater|MKM
 1 Ravenous Robots|TMT
@@ -76,34 +76,34 @@ name=AIForge
 1 Sewer-veillance Cam|TMT
 1 Sicarian Infiltrator|40K
 1 Skyclave Apparition|BLC
-1 Soul-Guide Lantern|EOC
+1 Soul-Guide Lantern|THB
 1 Staff of the Storyteller|ONC
-1 Stomping Ground|EOE
+1 Stomping Ground|GPT
 1 Tersa Lightshatter|TDM
 1 The Mightstone and Weakstone|BRO
 1 Third Path Iconoclast|TDC
-1 Through the Breach|INR
+1 Through the Breach|CHK
 1 Tireless Tracker|EOC
 1 Torsten, Founder of Benalia|DMC
 1 Unholy Heat|MB2
 1 Upheaval|MH2
-1 Woodfall Primus|LTC
+1 Woodfall Primus|SHM
 1 Yawgmoth's Will|USG
 1 Baloth Prime|EOC
 1 Bayou|30A
 1 Blightsteel Colossus|PLST
 1 Breeding Pool|EOE
-1 Chromatic Star|BRR
-1 Dark Confidant|J25
+1 Chromatic Star|TSP
+1 Dark Confidant|RAV
 1 Dauthi Voidwalker|TDC
 1 Displacer Kitten|MB2
 1 Etali, Primal Conqueror|MOM
 1 Flame Slash|PLST
 1 Formidable Speaker|ECL
 1 Green Sun's Zenith|2X2
-1 Hexdrinker|SLD
+1 Hexdrinker|MH1
 1 Ivora, Insatiable Heir|J25
-1 Lightning Greaves|SLD
+1 Lightning Greaves|MRD
 1 Oliphaunt|LTR
 1 Once Upon a Time|MB2
 1 Oust|CLU
@@ -111,11 +111,11 @@ name=AIForge
 1 Recurring Nightmare|EXO
 1 Relic of Sauron|LTC
 1 Reprieve|LTR
-1 Sacred Foundry|EOE
+1 Sacred Foundry|RAV
 1 Scythecat Cub|J25
 1 Six|MH3
 1 Springheart Nantuko|MH3
-1 Stoneforge Mystic|SLD
+1 Stoneforge Mystic|WWK
 1 Sylvan Safekeeper|MH3
 1 Taiga|30A
 1 Teferi, Hero of Dominaria|MB2
@@ -123,29 +123,29 @@ name=AIForge
 1 Thundering Falls|MKM
 1 Toxic Deluge|MH3
 1 Vaultborn Tyrant|BIG
-1 Walking Ballista|MB2
+1 Walking Ballista|AER
 1 Wrenn and Six|2X2
-1 Zuran Orb|MH2
+1 Zuran Orb|ICE
 1 Badlands|30A
 1 Bitter Triumph|TDC
 1 Brazen Borrower|WOC
 1 Bristly Bill, Spine Sower|OTJ
-1 Chain Lightning|SLD
+1 Chain Lightning|LEG
 1 Deep-Cavern Bat|LCI
 1 Delighted Halfling|LTR
 1 Elspeth, Storm Slayer|TDM
 1 Emperor of Bones|MH3
-1 Fatal Push|ACR
+1 Fatal Push|AER
 1 Fiery Confluence|LCC
-1 Ignoble Hierarch|ECC
+1 Ignoble Hierarch|MH2
 1 Inti, Seneschal of the Sun|LCI
 1 Jace, Vryn's Prodigy|PLST
 1 Lurrus of the Dream-Den|Q06
 1 Malcolm, Alluring Scoundrel|LCI
 1 Malevolent Rumble|MH3
-1 Mind Twist|MB2
+1 Mind Twist|4ED
 1 Mishra's Workshop|ATQ
-1 Mother of Runes|PLST
+1 Mother of Runes|ULG
 1 Occult Epiphany|VOC
 1 Ouroboroid|EOE
 1 Plateau|30A
@@ -153,76 +153,76 @@ name=AIForge
 1 Sneak Attack|DMR
 1 Spell Pierce|DFT
 1 Troll of Khazad-dûm|LTR
-1 Umezawa's Jitte|SLD
+1 Umezawa's Jitte|BOK
 1 Undercity Sewers|MKM
 1 Voice of Victory|TDM
 1 Worldspine Wurm|DSC
 1 Barrowgoyf|M3C
-1 Brainstorm|SLD
+1 Brainstorm|ICE
 1 Cori-Steel Cutter|TDM
 1 Currency Converter|NCC
-1 Duress|ONE
-1 Echo of Eons|MB2
+1 Duress|USG
+1 Echo of Eons|MH1
 1 Guide of Souls|MH3
 1 Icetill Explorer|EOE
 1 Lórien Revealed|LTR
-1 Necromancy|MKC
+1 Necromancy|VIS
 1 Noble Hierarch|PLST
 1 Parallax Wave|PLST
 1 Path to Exile|ECC
 1 Pest Infestation|EOC
 1 Phelia, Exuberant Shepherd|MH3
 1 Phlage, Titan of Fire's Fury|MH3
-1 Retrofitter Foundry|SLC
+1 Retrofitter Foundry|C18
 1 Sensei's Divining Top|MB2
-1 Snuff Out|MB2
+1 Snuff Out|MMQ
 1 Titania, Protector of Argoth|EOC
 1 Tropical Island|30A
 1 Tundra|30A
 1 Ugin, Eye of the Storms|TDM
 1 Undermountain Adventurer|CLB
 1 Vivi Ornitier|FIN
-1 Watery Grave|EOE
-1 Animate Dead|SLD
+1 Watery Grave|RAV
+1 Animate Dead|4ED
 1 Archon of Cruelty|MH2
 1 Badgermole Cub|TLA
-1 Balance|PLST
+1 Balance|4ED
 1 Booster Tutor|UND
 1 Caves of Chaos Adventurer|CLB
-1 Dark Ritual|SLD
+1 Dark Ritual|4ED
 1 Entomb|DMR
 1 Fastbond|30A
 1 Feywild Caretaker|CLB
-1 Fractured Identity|WHO
+1 Fractured Identity|C17
 1 Gut, True Soul Zealot|CLB
 1 Indris, the Hydrostatic Surge|YBLB
-1 Memory Lapse|SLD
-1 Mishra's Bauble|SLD
+1 Memory Lapse|HML
+1 Mishra's Bauble|CSP
 1 Mystic Confluence|CMM
 1 Nadu, Winged Wisdom|MH3
 1 Palace Jailer|CMM
-1 Ponder|SLD
+1 Ponder|LRW
 1 Remand|J25
 1 Snapcaster Mage|PLST
 1 Starting Town|PFIN
 1 Volcanic Island|30A
-1 Wasteland|MB2
+1 Wasteland|TMP
 1 Ajani, Nacatl Pariah|MH3
 1 Ancient Tomb|PLST
 1 Counterspell|SLD
-1 Dismember|TSR
-1 Fury|ECC
+1 Dismember|NPH
+1 Fury|MH2
 1 Lightning Bolt|SLD
 1 Lion's Eye Diamond|MIR
 1 Lotus Petal|MB2
-1 Mana Leak|2X2
+1 Mana Leak|STH
 1 Marsh Flats|MH2
 1 Mox Opal|2XM
 1 Ocelot Pride|MH3
 1 Prismatic Vista|ZNE
 1 Sheoldred, the Apocalypse|DMU
 1 Solitude|MH2
-1 Tinker|MB2
+1 Tinker|ULG
 1 Underground Sea|30A
 1 Wheel of Fortune|30A
 1 Windswept Heath|MH3
@@ -231,8 +231,8 @@ name=AIForge
 1 Atraxa, Grand Unifier|ONE
 1 Bloodstained Mire|MH3
 1 Fable of the Mirror-Breaker|NEO
-1 Flash|A25
-1 Flooded Strand|MH3
+1 Flash|MIR
+1 Flooded Strand|ONS
 1 Grim Monolith|ULG
 1 Library of Alexandria|ARN
 1 Oko, Thief of Crowns|ELD
@@ -240,26 +240,26 @@ name=AIForge
 1 Pyrogoyf|M3C
 1 Reanimate|DSC
 1 Seasoned Dungeoneer|CLB
-1 Skullclamp|TDC
+1 Skullclamp|DST
 1 Stock Up|DFT
-1 Urza, Lord High Artificer|MB2
-1 Vampiric Tutor|DMR
+1 Urza, Lord High Artificer|MH1
+1 Vampiric Tutor|VIS
 1 Verdant Catacombs|MH2
 1 Wooded Foothills|MH3
 1 Backup Plan|CNS
 1 Broadside Bombardiers|LCC
-1 Chrome Mox|SLC
+1 Chrome Mox|MRD
 1 Double Stroke|CNS
 1 Hullbreacher|MB2
 1 Minsc & Boo, Timeless Heroes|MB2
 1 Misty Rainforest|MH2
 1 Psychic Frog|MH3
 1 Scalding Tarn|MH2
-1 Swords to Plowshares|SLD
+1 Swords to Plowshares|3ED
 1 Tamiyo, Inquisitive Student|MH3
-1 Thoughtseize|SLD
+1 Thoughtseize|THS
 1 Urza's Saga|MB2
-1 Force of Will|DMR
+1 Force of Will|ALL
 1 Forth Eorlingas!|LTC
 1 Oracle of the Alpha|MB2
 1 Ragavan, Nimble Pilferer|MH2
@@ -268,9 +268,9 @@ name=AIForge
 1 Tolarian Academy|USG
 1 White Plume Adventurer|CLB
 1 White Tower of Ecthelion|LTC
-1 Demonic Tutor|CMM
+1 Demonic Tutor|3ED
 1 Orcish Bowmasters|LTR
-1 Mana Drain|2X2
+1 Mana Drain|LEG
 1 Mox Diamond|V10
 1 Mana Vault|30A
 1 The One Ring|LTR
@@ -278,7 +278,7 @@ name=AIForge
 1 Mana Crypt|2XM
 1 Mox Emerald|30A
 1 Mox Pearl|30A
-1 Sol Ring|SLD
+1 Sol Ring|CMD
 1 Ancestral Recall|30A
 1 Mox Jet|30A
 1 Mox Ruby|30A
