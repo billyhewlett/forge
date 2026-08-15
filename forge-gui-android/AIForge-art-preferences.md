@@ -42,7 +42,7 @@ whatever set code was already in the file.
 | Animate Dead | 4ED | Black border |
 | Necromancy | VIS | Original Visions art |
 | Demonic Tutor | 3ED | Revised art |
-| Reanimate | CLB | ⚠️ Still showing wrong art — unresolved |
+| Reanimate | DSC | Fixed by desktop session |
 | Duress | USG | Original Urza's Saga art |
 | Tendrils of Agony | SCG | Original Scourge art |
 
@@ -106,5 +106,4 @@ whatever set code was already in the file.
 | Soul-Guide Lantern | THB | Original Theros Beyond Death art |
 
 ## To investigate / fix
-- **Reanimate** — tried TMP, BBD, UMA, CLB. Still shows wrong art. May need to check which sets are downloaded on device.
 - **Fractured Identity** — tried C17 and WHO, neither has art. May not be downloaded.
