@@ -38,7 +38,7 @@ whatever set code was already in the file.
 | Dismember | NPH | Original New Phyrexia art |
 | Snuff Out | MMQ | Original Mercadian Masques art |
 | Mind Twist | 4ED | Black border |
-| Thoughtseize | THS | Theros art |
+| Thoughtseize | LRW | Original Lorwyn (2007) art, Aleksi Briclot |
 | Animate Dead | 4ED | Black border |
 | Necromancy | VIS | Original Visions art |
 | Demonic Tutor | 3ED | Revised art |
