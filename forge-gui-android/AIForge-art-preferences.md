@@ -42,7 +42,7 @@ whatever set code was already in the file.
 | Animate Dead | 4ED | Black border |
 | Necromancy | VIS | Original Visions art |
 | Demonic Tutor | 3ED | Revised art |
-| Reanimate | DSC | Fixed by desktop session |
+| Reanimate | TMP | Original Tempest art (Robert Bliss) - user wants the classic original, not the 2024 DSC reprint |
 | Duress | USG | Original Urza's Saga art |
 | Tendrils of Agony | SCG | Original Scourge art |
 
@@ -99,7 +99,7 @@ whatever set code was already in the file.
 | Zuran Orb | ICE | Original Ice Age art |
 | Chromatic Star | TSP | Original Time Spiral art |
 | Retrofitter Foundry | C18 | Original Commander 2018 art |
-| Sol Ring | CMD | Mark Tedin art (Commander 2011) |
+| Sol Ring | 3ED | Mark Tedin art, original Revised Edition printing (was mispinned to CMD, whose actual art is by Mike Bierek, not Tedin) |
 | Lightning Greaves | MRD | Original Mirrodin art |
 | Umezawa's Jitte | BOK | Original Betrayers of Kamigawa art |
 | Nettlecyst | MH2 | Original Modern Horizons 2 art |
