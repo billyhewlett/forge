@@ -85,6 +85,9 @@ whatever set code was already in the file.
 | Stomping Ground | GPT | Original Guildpact art |
 | Steam Vents | GPT | Original Guildpact art |
 | Watery Grave | RAV | Original Ravnica art |
+| Overgrown Tomb | RAV | Original Ravnica art (was missing from this list, silently pinned to ECL) |
+| Godless Shrine | GPT | Original Guildpact art (was missing from this list, silently pinned to EOE) |
+| Breeding Pool | DIS | Original Dissension art (was missing from this list, silently pinned to EOE) |
 
 ## Artifacts
 | Card | Set | Notes |

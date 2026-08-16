@@ -6,7 +6,7 @@ name=AIForge
 1 Blood Crypt|DIS
 1 Hallowed Fountain|DIS
 1 Lore Seeker|CNS
-1 Overgrown Tomb|ECL
+1 Overgrown Tomb|RAV
 1 Pillage the Bog|OTJ
 1 Steam Vents|GPT
 1 Temple Garden|RAV
@@ -30,7 +30,7 @@ name=AIForge
 1 Generous Plunderer|BIG
 1 Goblin Bombardment|TMP
 1 Goblin Welder|ULG
-1 Godless Shrine|EOE
+1 Godless Shrine|GPT
 1 Kaldra Compleat|CMM
 1 Lingering Souls|TDC
 1 Questing Beast|ELD
@@ -92,7 +92,7 @@ name=AIForge
 1 Baloth Prime|EOC
 1 Bayou|30A
 1 Blightsteel Colossus|PLST
-1 Breeding Pool|EOE
+1 Breeding Pool|DIS
 1 Chromatic Star|TSP
 1 Dark Confidant|RAV
 1 Dauthi Voidwalker|TDC
