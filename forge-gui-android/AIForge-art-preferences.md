@@ -4,6 +4,20 @@ All cards in `AIForge.dck` have explicit `|SET` codes. The ones below were
 deliberately chosen for a preferred printing. Cards not listed here use
 whatever set code was already in the file.
 
+**Standard**: the user wants each card's *true original historical printing*, not
+just "an old-looking" or same-artist reprint. Verify against the actual edition file
+(`grep -n "Card Name" "forge-gui/res/editions/<Set Name>.txt"`) before trusting a doc
+note or an artist credit — Sol Ring was documented as "Mark Tedin art" but pinned to
+`CMD` (2011), whose actual art is by Mike Bierek; Tedin's art is the `3ED` (Revised)
+printing. Don't assume a note is correct just because it sounds plausible.
+
+**Diagnostic technique**: to verify a data-file push actually reached the live app
+(as opposed to landing in an unread path or being masked by a stale cache), temporarily
+remove one card's line from `AIForgeRankings.txt`, push, force-stop, and confirm that
+exact card shows a 0/unrankable rating in-draft. A clean 0 proves the push path is real
+and live; anything else means you're not editing the file the app actually reads. Revert
+the rankings edit immediately after confirming — don't leave a card at 0 by accident.
+
 ## White
 | Card | Set | Notes |
 |---|---|---|

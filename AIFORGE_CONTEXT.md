@@ -120,6 +120,34 @@ adb install -r forge-android-aiforge-aligned-debugSigned.apk
 ```
 
 **Step 6 — Push data files**
+
+**IMPORTANT (found 2026-08-15, cost an entire debugging session):** Forge Android reads
+`.dck`/`.draft`/rankings/`cardsfolder` files **only** from the OBB bundle path
+(`/sdcard/Android/obb/<pkg>/Forge/res/...`), never from `/sdcard/Android/data/<pkg>/files/...`.
+`ForgeConstants.DECK_CUBE_DIR`, `DRAFT_DIR`, and `CARD_DATA_DIR` are all built from `RES_DIR`,
+which on Android resolves to the OBB path (confirmed via `Forge.java` — `assetDir0` passed in
+at app start literally *is* the OBB directory). Pushing to `data/.../files/...` (the old
+version of this step, below for reference) silently writes to a path the app never reads for
+these file types — any fix pushed that way appears to do nothing, no error, no warning. This
+was mistaken for caching bugs, preference bugs, and lost git history multiple times before the
+real cause was found. The only path constant that legitimately lives under `data/.../files/` is
+device preferences (`forge.preferences`), which is why that mechanism always worked correctly.
+
+```powershell
+$b = "/sdcard/Android/obb/forge.app/Forge/res"
+adb push forge-gui/res/draft/AIForge.draft             $b/draft/AIForge.draft
+adb push forge-gui/res/draft/AIForgeRankings.txt       $b/draft/AIForgeRankings.txt
+adb push forge-gui/res/cube/AIForge.dck                $b/cube/AIForge.dck
+adb push forge-gui/res/cardsfolder/g/gleemox.txt       $b/cardsfolder/g/gleemox.txt
+adb push forge-gui/res/cardsfolder/b/booster_tutor.txt $b/cardsfolder/b/booster_tutor.txt
+```
+
+Always force-stop the app after pushing (`adb shell am force-stop <pkg>`) — a background/foreground
+cycle alone does not guarantee a re-read of these files.
+
+<details>
+<summary>Old (wrong) path — kept for reference only, do not use</summary>
+
 ```powershell
 $b = "/sdcard/Android/data/forge.app/files"
 adb push forge-gui/res/draft/AIForge.draft             $b/draft/AIForge.draft
@@ -128,6 +156,7 @@ adb push forge-gui/res/cube/AIForge.dck                $b/cube/AIForge.dck
 adb push forge-gui/res/cardsfolder/g/gleemox.txt       $b/cardsfolder/g/gleemox.txt
 adb push forge-gui/res/cardsfolder/b/booster_tutor.txt $b/cardsfolder/b/booster_tutor.txt
 ```
+</details>
 
 ---
 
