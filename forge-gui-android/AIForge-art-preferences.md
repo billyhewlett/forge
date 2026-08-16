@@ -107,6 +107,28 @@ whatever set code was already in the file.
 | Skullclamp | DST | Original Darksteel art |
 | Pentad Prism | 5DN | Original Fifth Dawn art |
 | Soul-Guide Lantern | THB | Original Theros Beyond Death art |
+| Lotus Petal | TMP | Original Tempest art (April Lee) |
+
+## Black
+| Card | Set | Notes |
+|---|---|---|
+| Entomb | ODY | Original Odyssey art (Ron Spears) |
+
+## Red
+| Card | Set | Notes |
+|---|---|---|
+| Lightning Bolt | 4ED | Black border (Christopher Rush) |
 
 ## To investigate / fix
 - **Fractured Identity** — tried C17 and WHO, neither has art. May not be downloaded.
+
+## Known root cause of recurring "art broke" reports (2026-08-15)
+Cube/draft/rankings files (`AIForge.dck`, `AIForge.draft`, `AIForgeRankings.txt`) are read
+by Forge Android **only** from the OBB bundle path
+(`/sdcard/Android/obb/forge.app/Forge/res/...`), which is baked in at APK install time.
+The documented push pipeline in `AIFORGE_CONTEXT.md` (Step 6) pushes to
+`/sdcard/Android/data/forge.app/files/...` instead — a path Forge never reads for these
+files (`ForgeConstants.DECK_CUBE_DIR`/`DRAFT_DIR` both resolve under the OBB `res/` dir on
+Android). Any `.dck`/rankings fix pushed via the old pipeline silently never took effect
+until the next full APK reinstall. Push data-file updates to the OBB `res/` path instead,
+e.g. `adb push forge-gui/res/cube/AIForge.dck /sdcard/Android/obb/forge.app/Forge/res/cube/AIForge.dck`.
