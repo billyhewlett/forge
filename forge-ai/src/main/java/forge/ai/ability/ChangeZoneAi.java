@@ -1481,6 +1481,59 @@ public class ChangeZoneAi extends SpellAbilityAi {
         return new AiAbilityDecision(100, AiPlayDecision.WillPlay);
     }
 
+    /**
+     * Entomb target selection: put the right card into the graveyard for reanimation.
+     *
+     * Priority:
+     *   1. With Goblin Welder in play: any artifact (weld it back onto the battlefield).
+     *   2. Large creatures CMC >= 6 (Atraxa, Archon, Worldspine, etc.) — primary reanimation targets.
+     *   3. Echo of Eons by name — flashback card draw.
+     *   4. Medium creatures CMC 4-5 as fallback.
+     *   5. NEVER: planeswalkers (can't be reanimated; Ugin, etc.) or other non-reusable permanents
+     *      unless nothing better exists.
+     */
+    private static Card doEntombLogic(final Player ai, final SpellAbility sa, CardCollection fetchList) {
+        boolean hasWelder = !CardLists.filter(ai.getCardsIn(ZoneType.Battlefield),
+                CardPredicates.nameEquals("Goblin Welder")).isEmpty();
+
+        // With Goblin Welder on board any artifact can be welded back, so bin the best one.
+        if (hasWelder) {
+            CardCollection artifacts = CardLists.filter(fetchList, CardPredicates.ARTIFACTS);
+            if (!artifacts.isEmpty()) {
+                return ComputerUtilCard.getBestAI(artifacts);
+            }
+        }
+
+        // Primary targets: big creatures the AI can reanimate for maximum ETB value.
+        CardCollection bigCreatures = CardLists.filter(fetchList, c -> c.isCreature() && c.getCMC() >= 6);
+        if (!bigCreatures.isEmpty()) {
+            return ComputerUtilCard.getBestCreatureAI(bigCreatures);
+        }
+
+        // Echo of Eons — flashback gives full hand refill even if no reanimation in hand.
+        CardCollection echoOfEons = CardLists.filter(fetchList,
+                CardPredicates.nameEquals("Echo of Eons"));
+        if (!echoOfEons.isEmpty()) {
+            return echoOfEons.getFirst();
+        }
+
+        // Medium creatures (CMC 4-5) as a reasonable reanimation target.
+        CardCollection medCreatures = CardLists.filter(fetchList, c -> c.isCreature() && c.getCMC() >= 4);
+        if (!medCreatures.isEmpty()) {
+            return ComputerUtilCard.getBestCreatureAI(medCreatures);
+        }
+
+        // Last resort: any creature, but NEVER a planeswalker (can't be reanimated).
+        CardCollection anyCreature = CardLists.filter(fetchList, CardPredicates.CREATURES);
+        if (!anyCreature.isEmpty()) {
+            return ComputerUtilCard.getBestCreatureAI(anyCreature);
+        }
+
+        // Absolutely nothing useful — avoid planeswalkers if we can.
+        CardCollection nonPW = CardLists.filter(fetchList, CardPredicates.PLANESWALKERS.negate());
+        return ComputerUtilCard.getBestAI(nonPW.isEmpty() ? fetchList : nonPW);
+    }
+
     public static Card chooseCardToHiddenOriginChangeZone(ZoneType destination, List<ZoneType> origin, SpellAbility sa, CardCollection fetchList, Player player, final Player decider) {
         if (fetchList.isEmpty()) {
             return null;
@@ -1542,6 +1595,8 @@ public class ChangeZoneAi extends SpellAbilityAi {
                 if (c != null) {
                     return c;
                 }
+            } else if (logic.equals("Entomb")) {
+                return doEntombLogic(decider, sa, fetchList);
             }
         }
         if (fetchList.isEmpty()) {
