@@ -138,6 +138,9 @@ public class ChangeZoneAi extends SpellAbilityAi {
                 }
             }
             return false;
+        } else if (aiLogic.equals("FlashCheaterPhase")) {
+            // Phase gate only — used inside checkPhaseRestrictions delegation
+            return true;
         }
 
         return super.checkAiLogic(ai, sa, aiLogic);
@@ -181,6 +184,8 @@ public class ChangeZoneAi extends SpellAbilityAi {
                     return new AiAbilityDecision(100, AiPlayDecision.WillPlay);
                 }
                 return new AiAbilityDecision(0, AiPlayDecision.CantPlayAi);
+            } else if (aiLogic.equals("FlashCheater")) {
+                return doFlashCheaterLogic(aiPlayer, sa);
             }
         }
         if (sa.isHidden()) {
@@ -759,6 +764,13 @@ public class ChangeZoneAi extends SpellAbilityAi {
             return true;
         } else if (aiLogic.equals("BeforeCombat")) {
             return !ai.getGame().getPhaseHandler().getPhase().isAfter(PhaseType.COMBAT_BEGIN);
+        } else if (aiLogic.equals("FlashCheater")) {
+            // Prefer opponent's end step: ETB fires before they untap and can respond.
+            // Also allow own main phases so Flash isn't completely dead if EOT never comes.
+            boolean atOppEndStep = ph.getNextTurn() == ai && ph.is(PhaseType.END_OF_TURN);
+            boolean ownMainPhase = ph.isPlayerTurn(ai)
+                    && (ph.is(PhaseType.MAIN1) || ph.is(PhaseType.MAIN2));
+            return atOppEndStep || ownMainPhase;
         }
 
         if (sa.isHidden()) {
@@ -2107,6 +2119,34 @@ public class ChangeZoneAi extends SpellAbilityAi {
 
         // We have enough mana sources — let the caller use keycardFound (may be null, triggering fallthrough)
         return keycardFound;
+    }
+
+    /**
+     * Handles "Flash-cheater" cards that put a creature from hand onto the battlefield
+     * and then ask the controller to pay (CMC-2) or sacrifice it.
+     *
+     * Strategy:
+     *   • Find the highest-CMC creature in hand (CMC >= 7).
+     *   • Always cast Flash for the ETB value — even if the AI can't pay the unless
+     *     cost, the ETB trigger fires before the sacrifice (e.g. Atraxa draws 4 cards,
+     *     Archon of Cruelty drains).
+     *   • If the AI has exactly enough mana to cover Flash + unless cost, keep the creature.
+     */
+    private static AiAbilityDecision doFlashCheaterLogic(final Player ai, final SpellAbility sa) {
+        Card bestTarget = null;
+        for (Card c : ai.getCardsIn(ZoneType.Hand)) {
+            if (!c.isCreature() || c.getCMC() < 7) continue;
+            if (bestTarget == null || c.getCMC() > bestTarget.getCMC()
+                    || (c.getCMC() == bestTarget.getCMC()
+                        && ComputerUtilCard.evaluateCreature(c) > ComputerUtilCard.evaluateCreature(bestTarget))) {
+                bestTarget = c;
+            }
+        }
+        if (bestTarget == null) {
+            return new AiAbilityDecision(0, AiPlayDecision.CantPlayAi);
+        }
+        // Flash is always worth casting for the ETB — even sacrificing Atraxa yields 4 cards.
+        return new AiAbilityDecision(100, AiPlayDecision.WillPlay);
     }
 
     @Override
