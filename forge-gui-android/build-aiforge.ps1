@@ -41,8 +41,8 @@ function Push-Data {
         @{ from="$res\cube\AIForge.dck";          to="$base/cube/AIForge.dck" }
     )
     foreach ($f in $files) {
-        $r = adb push $f.from $f.to 2>&1 | Select-Object -Last 1
-        Write-Host "  $($f.to.Split('/')[-1]): $r"
+        adb push $f.from $f.to | Select-Object -Last 1
+        Write-Host "  Pushed $($f.to.Split('/')[-1])"
     }
 
     # Card-script overrides: card scripts live inside cardsfolder.zip on device.
@@ -56,7 +56,7 @@ function Push-Data {
     New-Item -ItemType Directory -Force $tmp | Out-Null
     $zipLocal = "$tmp\cardsfolder.zip"
     Write-Host "  Pulling cardsfolder.zip..."
-    adb pull "$base/cardsfolder/cardsfolder.zip" $zipLocal 2>&1 | Out-Null
+    adb pull "$base/cardsfolder/cardsfolder.zip" $zipLocal | Out-Null
     foreach ($c in $cardOverrides) {
         $dir = "$tmp\$($c.path)"; New-Item -ItemType Directory -Force $dir | Out-Null
         Copy-Item "$res\cardsfolder\$($c.path)\$($c.name)" "$dir\$($c.name)"
@@ -66,7 +66,7 @@ function Push-Data {
         Write-Host "  Patched $($c.name) into zip"
     }
     Write-Host "  Pushing patched cardsfolder.zip..."
-    adb push $zipLocal "$base/cardsfolder/cardsfolder.zip" 2>&1 | Select-Object -Last 1
+    adb push $zipLocal "$base/cardsfolder/cardsfolder.zip" | Out-Null; Write-Host "  Pushed cardsfolder.zip"
     Remove-Item -Recurse -Force $tmp
 }
 
