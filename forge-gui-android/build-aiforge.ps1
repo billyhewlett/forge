@@ -1,4 +1,4 @@
-# build-aiforge.ps1 — Full AIForge APK build + install pipeline for Windows
+﻿# build-aiforge.ps1 — Full AIForge APK build + install pipeline for Windows
 # Run from any directory. Requires junctions and Android SDK (see PREREQUISITES below).
 #
 # PREREQUISITES (one-time setup):
@@ -73,9 +73,9 @@ function Push-Data {
 # ── 0. Push-only shortcut ───────────────────────────────────────────────────
 if ($PushOnly) {
     Step "Pushing data files only"
-    adb shell am force-stop forge.app 2>&1 | Out-Null
+    adb shell am force-stop forge.app | Out-Null
     Push-Data
-    adb shell am force-stop forge.app 2>&1 | Out-Null
+    adb shell am force-stop forge.app | Out-Null
     Write-Host "  Forge force-stopped — changes take effect on next launch."
     exit 0
 }
