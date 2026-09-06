@@ -73,7 +73,10 @@ function Push-Data {
 # ── 0. Push-only shortcut ───────────────────────────────────────────────────
 if ($PushOnly) {
     Step "Pushing data files only"
+    adb shell am force-stop forge.app 2>&1 | Out-Null
     Push-Data
+    adb shell am force-stop forge.app 2>&1 | Out-Null
+    Write-Host "  Forge force-stopped — changes take effect on next launch."
     exit 0
 }
 
@@ -156,6 +159,8 @@ Write-Host "Signed APK: $signedApk"
 
 # ── 5. Install ───────────────────────────────────────────────────────────────
 Step "Installing APK"
+# Force-stop first so the new APK and card files take effect immediately on launch.
+adb shell am force-stop forge.app 2>&1 | Out-Null
 # On signing key mismatch: adb uninstall forge.app, then re-run.
 adb install -r $signedApk 2>&1
 if ($LASTEXITCODE -ne 0) { throw "adb install failed" }
@@ -163,5 +168,9 @@ if ($LASTEXITCODE -ne 0) { throw "adb install failed" }
 # ── 6. Push data files ───────────────────────────────────────────────────────
 Step "Pushing data files"
 Push-Data
+
+# Force-stop again after data push so Forge re-reads card files on next launch.
+adb shell am force-stop forge.app 2>&1 | Out-Null
+Write-Host "  Forge force-stopped — changes take effect on next launch."
 
 Step "Done"
