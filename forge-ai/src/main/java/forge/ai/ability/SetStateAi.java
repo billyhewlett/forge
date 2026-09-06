@@ -137,8 +137,10 @@ public class SetStateAi extends SpellAbilityAi {
             // hidden agenda
             if (card.getState(CardStateName.Original).hasKeyword(Keyword.HIDDEN_AGENDA)
                     && card.isInZone(ZoneType.Command)) {
-                final String chosenName = card.getNamedCard();
-                return ai.getGame().getStack().getSpellsCastThisTurn().stream().anyMatch(sp -> ai.equals(sp.getActivatingPlayer()) && sp.getHostCard().getName().equals(chosenName));
+                // Flip at the start of our own turn so the trigger is active before we cast
+                // the named spell. (Old logic flipped after the spell was already cast, which
+                // meant the copy trigger never fired because the conspiracy wasn't face-up yet.)
+                return ph.isPlayerTurn(ai);
             }
 
             // non-permanent facedown can't be turned face up
