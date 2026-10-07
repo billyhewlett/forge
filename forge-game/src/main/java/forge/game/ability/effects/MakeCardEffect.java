@@ -86,6 +86,7 @@ public class MakeCardEffect extends SpellAbilityEffect {
                         pack.add(Aggregates.random(cubePool));
                     }
                 } else {
+                    StaticData.instance().ensureAllCardsLoaded();
                     SealedTemplate booster = Aggregates.random(StaticData.instance().getBoosters());
                     pack = new BoosterPack(booster.getEdition(), booster).getCards();
                 }
@@ -164,7 +165,7 @@ public class MakeCardEffect extends SpellAbilityEffect {
                             pc = StaticData.instance().getCommonCards().getCard(name, editionCode);
                         }
                         Card card = Card.fromPaperCard(pc, player);
-
+                        CardUtil.turnToRightFace(name, card);
                         if (sa.hasParam("TokenCard")) {
                             card.setTokenCard(true);
                         }
