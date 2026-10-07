@@ -24,7 +24,14 @@ Proclamation, Backup Plan, Double Stroke) and custom cards (Gleemox).
 
 ### Modified card scripts
 - `forge-gui/res/cardsfolder/g/gleemox.txt` — removed `DeckLimit:0` ban
-- `forge-gui/res/cardsfolder/b/booster_tutor.txt` — Spellbook workaround (see Known Issues)
+- `forge-gui/res/cardsfolder/e/entomb.txt`, `l/luminarch_aspirant.txt` — AI hints (see AI fixes)
+- Booster Tutor uses the stock script; cube-pool behaviour is in Java (`GameRules.cubeCardPool`,
+  `MakeCardEffect` Booster branch draws 15 random cards from the drafted cube's pool)
+
+### AI fixes (2026-09-06)
+- Flash: `FlashCheater` logic in `ChangeZoneAi.java` + phase restriction
+- Double Stroke timing, Luminarch Aspirant main-phase casting (`SetStateAi.java`, card script)
+- Entomb picks real graveyard targets (big creatures, Echo of Eons; never planeswalkers)
 
 ### Shared signing keystore
 - `forge-gui-android/aiforge.keystore` — PKCS12, alias `androiddebugkey`, pass `android`
@@ -66,15 +73,36 @@ Proclamation, Backup Plan, Double Stroke) and custom cards (Gleemox).
 
 ---
 
+## Updating to latest upstream Forge (new cards)
+
+Last done 2026-10-07: `git fetch origin && git merge origin/master` (origin = Card-Forge/forge,
+billyhewlett = the fork, branch `aiforge-custom`). Expect conflicts only in our touched Java files
+(last time: `MakeCardEffect.java`, `HostedMatch.java`). Then run the full script below — it
+replaces the phone's whole `res/` so new cards, new editions and our cube files land together.
+
 ## Build Pipeline (Windows)
 
-Use the script: `forge-gui-android/build-aiforge.ps1`
+Use the script: `forge-gui-android/build-aiforge.ps1`. Paths default to the script's own
+checkout, `$env:ANDROID_HOME` (desktop: `C:\Android`) and `$env:JAVA_HOME` (desktop falls back
+to `C:\Program Files\Java\jdk-22`); override with `-Forge/-Sdk/-Jdk`. No junctions needed on the
+desktop (`E:\fl-aiforge-v2`).
 
 ```powershell
-cd C:\Users\billy\Documents\forge\forge-gui-android
-.\build-aiforge.ps1           # full build + install
-.\build-aiforge.ps1 -PushOnly # just push data files (no recompile)
+.\forge-gui-android\build-aiforge.ps1           # full build + install + full res/ push
+.\forge-gui-android\build-aiforge.ps1 -ResOnly  # re-push the whole res/ only
+.\forge-gui-android\build-aiforge.ps1 -PushOnly # just cube/draft/rankings + cardsfolder.zip
 ```
+
+Do not wrap the script call in `*>&1` / `2>&1` under Windows PowerShell 5.1: adb's normal stderr
+output then becomes a terminating error (`NativeCommandError`) even though adb succeeded.
+
+**Why the full res/ push matters:** on launch the app compares `Forge/version.txt` with the
+APK's `versionName`. When they differ (any upstream version bump, e.g. 2.0.15 -> 2.0.16) it
+downloads the *stock* nightly `assets.zip`, which overwrites `res/` — wiping AIForge.dck/.draft/
+rankings and our card scripts. `Push-Res` builds `res/` from this checkout (same layout as the
+pom's `android-release-packaging`: plain files + `res/cardsfolder/cardsfolder.zip` + `res/build.txt`),
+unzips it on the device, keeps the previous copy as `Forge/res.old/`, and writes `version.txt`
+= installed `versionName`, so no download prompt appears.
 
 ### Manual steps if the script isn't working
 
@@ -236,14 +264,9 @@ use `adb install -r` directly. If it doesn't match, uninstall first.
 
 ## Known Issues / Pending Work
 
-### Booster Tutor (TABLED — top priority for desktop session)
-- Current `booster_tutor.txt` uses a Spellbook with all 282 main cube cards
-- This is a **workaround** — the proper fix (implemented on desktop) presents 15 random
-  cards from the cube's remaining card pool (cubeSurplus in BoosterDraft.java)
-- When you return to desktop: push the proper implementation to this branch
-- The spellbook approach works but is unwieldy (shows all 282 cards every time)
-- Note: cards with commas in names use semicolons in the Spellbook param
-  (e.g. `Minsc & Boo; Timeless Heroes`)
+### Booster Tutor — DONE
+Draws 15 random cards from the drafted cube's pool (`GameRules.cubeCardPool`). The old
+Spellbook workaround is gone.
 
 ### Cube cards with `AI:RemoveDeck:All` (post-fix still worth verifying)
 The CardRanker fix suppresses the -20 penalty during custom drafts. However, these cards
@@ -255,11 +278,9 @@ To find all affected cube cards:
 grep -r "AI:RemoveDeck:All" forge-gui/res/cardsfolder/ | grep -f <(cut -d' ' -f2 forge-gui/res/cube/AIForge.dck | tr '[:upper:]' '[:lower:]' | sed 's/ /_/g')
 ```
 
-### Flash AI play pattern
-- Flash has `AI:RemoveDeck:All` which signals the AI doesn't know how to play it
-- The draft fix (CardRanker) means AI will now draft Flash, but it may still never cast it
-- Per-card AI hints in card scripts (e.g. `AILogic:Flash` style params) could fix this
-- Approach: whack-a-mole per problematic card
+### Per-card gameplay AI (whack-a-mole)
+Flash, Double Stroke, Luminarch Aspirant and Entomb are fixed (see AI fixes above). Other cube
+cards with `AI:RemoveDeck:All` may still be drafted but played badly.
 
 ### Conspiracy cards (believed working, low sample rate)
 - Only 3/285 cards (~1%) — statistically rare to see them drafted
@@ -270,6 +291,10 @@ grep -r "AI:RemoveDeck:All" forge-gui/res/cardsfolder/ | grep -f <(cut -d' ' -f2
 ---
 
 ## Card Rankings Summary
+- Regenerate with `Downloads\rerank.py <baseline> <17lands csv> <out>`. Current file is reproduced
+  exactly by `AIForgeRankings_baseline.txt` + `card-ratings-2026-09-04 (1).csv` (ATA/ALSA export),
+  with one edit: Indris -> Lutri, the Spellchaser at baseline #91 (lands at #95). Lutri was
+  restored 2026-10-07, reversing the 2026-08-14 Indris swap.
 - `setSizes.get("CUSTOM")` = 285 (max rank in AIForgeRankings.txt = #285 Outland Liberator)
 - `ReadDraftRankings.getRanking()` returns `rank / maxRank` as float 0–1
 - `CardRanker.getRawScore()` converts to 0–100: `100 - (100 * rkg)`

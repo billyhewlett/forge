@@ -1,25 +1,31 @@
 ﻿# build-aiforge.ps1 — Full AIForge APK build + install pipeline for Windows
-# Run from any directory. Requires junctions and Android SDK (see PREREQUISITES below).
-#
-# PREREQUISITES (one-time setup):
-#   New-Item -ItemType Junction -Path C:\f   -Target C:\Users\<you>\Documents\forge
-#   New-Item -ItemType Junction -Path C:\sdk -Target C:\Users\<you>\AppData\Local\Android\Sdk
-#   New-Item -ItemType Junction -Path C:\jdk -Target "C:\Program Files\Eclipse Adoptium\jdk-..."
+# Run from any directory. Paths default to this checkout, $env:ANDROID_HOME and
+# $env:JAVA_HOME; override with -Forge/-Sdk/-Jdk. If the cmd.exe 8191-char limit bites
+# (long checkout path), point a short junction at the checkout and pass -Forge C:\f:
+#   New-Item -ItemType Junction -Path C:\f -Target <checkout>
 #
 # USAGE:
-#   .\build-aiforge.ps1            # full build + install
-#   .\build-aiforge.ps1 -PushOnly  # skip build, just push data files to device
+#   .\build-aiforge.ps1            # full build + install + full res push
+#   .\build-aiforge.ps1 -PushOnly  # skip build, just push cube/draft files + cardsfolder.zip
+#   .\build-aiforge.ps1 -ResOnly   # skip build, re-push the whole res/ (after a build+install)
 
-param([switch]$PushOnly)
+param(
+    [switch]$PushOnly,
+    [switch]$ResOnly,
+    [string]$Forge = (Resolve-Path "$PSScriptRoot\..").Path,
+    [string]$Sdk   = $(if ($env:ANDROID_HOME) { $env:ANDROID_HOME } else { "C:\sdk" }),
+    [string]$Jdk   = $(if ($env:JAVA_HOME) { $env:JAVA_HOME } elseif (Test-Path "C:\jdk") { "C:\jdk" } else { "C:\Program Files\Java\jdk-22" })
+)
 
 Set-StrictMode -Off
 $ErrorActionPreference = "Stop"
 
-$FORGE       = "C:\f"
-$SDK         = "C:\sdk"
-$JDK         = "C:\jdk"
+$FORGE       = $Forge
+$SDK         = $Sdk
+$JDK         = $Jdk
 $TARGET      = "$FORGE\forge-gui-android\target"
-$SIGNER      = "$FORGE\forge-gui-android\tools\uber-apk-signer.jar"
+# uber-apk-signer does not follow Windows junctions; resolve to the real path.
+$SIGNER      = (Get-Item "$FORGE\forge-gui-android\tools\uber-apk-signer.jar").FullName
 $KEYSTORE    = "$FORGE\forge-gui-android\aiforge.keystore"   # shared laptop+desktop keystore
 $KS_ALIAS    = "androiddebugkey"
 $KS_PASS     = "android"
@@ -28,10 +34,21 @@ $D8_JAR      = "$SDK\build-tools\35.0.0\lib\d8.jar"
 
 function Step($msg) { Write-Host "`n=== $msg ===" -ForegroundColor Cyan }
 
+# Forge on Android 11+ (SDK > 30) reads data from getObbDir()+"/Forge/", which is
+# /sdcard/Android/obb/forge.app/Forge/ — NOT /sdcard/Android/data/forge.app/files/
+$DEVICE_ASSETS = "/sdcard/Android/obb/forge.app/Forge"
+
+function New-CardsfolderZip($outZip) {
+    # Card scripts live inside res/cardsfolder/cardsfolder.zip on device. Build it from the
+    # whole repo cardsfolder (same as the pom's android-release-packaging step), so every
+    # card-script change in this branch ships — no per-card override list to keep in sync.
+    # Use 'jar' (NOT .NET ZipFile — that corrupts extra-field headers).
+    & "$JDK\bin\jar.exe" cMf $outZip -C "$FORGE\forge-gui\res\cardsfolder" .
+    if ($LASTEXITCODE -ne 0) { throw "cardsfolder.zip build failed" }
+}
+
 function Push-Data {
-    # Forge on Android 11+ (SDK > 30) reads data from getObbDir()+"/Forge/", which is
-    # /sdcard/Android/obb/forge.app/Forge/ — NOT /sdcard/Android/data/forge.app/files/
-    $base = "/sdcard/Android/obb/forge.app/Forge/res"
+    $base = "$DEVICE_ASSETS/res"
     $res  = "$FORGE\forge-gui\res"
 
     # Plain file pushes (cube/draft data)
@@ -45,28 +62,40 @@ function Push-Data {
         Write-Host "  Pushed $($f.to.Split('/')[-1])"
     }
 
-    # Card-script overrides: card scripts live inside cardsfolder.zip on device.
-    # Pull zip, patch entries with jar uf (NOT .NET ZipFile — that corrupts extra-field headers),
-    # push back. Add any custom/fixed card scripts to $cardOverrides.
-    $cardOverrides = @(
-        @{ path="g"; name="gleemox.txt" },       # DeckLimit:0 removed — allows cube use
-        @{ path="b"; name="booster_tutor.txt" }  # custom Booster Tutor logic
-    )
     $tmp = "$env:TEMP\forge-cardsfix"
     New-Item -ItemType Directory -Force $tmp | Out-Null
-    $zipLocal = "$tmp\cardsfolder.zip"
-    Write-Host "  Pulling cardsfolder.zip..."
-    adb pull "$base/cardsfolder/cardsfolder.zip" $zipLocal | Out-Null
-    foreach ($c in $cardOverrides) {
-        $dir = "$tmp\$($c.path)"; New-Item -ItemType Directory -Force $dir | Out-Null
-        Copy-Item "$res\cardsfolder\$($c.path)\$($c.name)" "$dir\$($c.name)"
-        Push-Location $tmp
-        & "$JDK\bin\jar.exe" uf $zipLocal "$($c.path)/$($c.name)"
-        Pop-Location
-        Write-Host "  Patched $($c.name) into zip"
-    }
-    Write-Host "  Pushing patched cardsfolder.zip..."
-    adb push $zipLocal "$base/cardsfolder/cardsfolder.zip" | Out-Null; Write-Host "  Pushed cardsfolder.zip"
+    New-CardsfolderZip "$tmp\cardsfolder.zip"
+    adb push "$tmp\cardsfolder.zip" "$base/cardsfolder/cardsfolder.zip" | Out-Null; Write-Host "  Pushed cardsfolder.zip"
+    Remove-Item -Recurse -Force $tmp
+}
+
+function Push-Res {
+    # Replace the device's whole res/ with this checkout's, stamped with the new APK's
+    # build.txt/version.txt. Without this, a version bump makes the app download the stock
+    # nightly assets.zip on launch, which (a) wipes AIForge.dck/.draft/rankings and our card
+    # scripts and (b) doesn't match a branch built from an older/newer upstream.
+    # Layout mirrors the pom's android-release-packaging assets.zip. The old res/ is kept
+    # as res.old/ on device for rollback.
+    $assets = "$FORGE\forge-gui-android\target\classes\assets"
+    # Must equal the installed package's versionName (what Main.getVersionString() returns),
+    # not target\classes\assets\version.txt, which carries an extra -MM.dd suffix.
+    $version = ((adb shell dumpsys package forge.app | Select-String "versionName=") -split "=")[-1].Trim()
+    if (-not $version) { throw "Could not read installed forge.app versionName" }
+    $tmp = "$env:TEMP\forge-res"
+    if (Test-Path $tmp) { Remove-Item -Recurse -Force $tmp }
+    New-Item -ItemType Directory -Force "$tmp\stage\res\cardsfolder" | Out-Null
+    robocopy "$FORGE\forge-gui\res" "$tmp\stage\res" /E /XD "$FORGE\forge-gui\res\cardsfolder" /XF *.xcf /NFL /NDL /NJH /NJS /NP | Out-Null
+    if ($LASTEXITCODE -ge 8) { throw "robocopy failed ($LASTEXITCODE)" }
+    Copy-Item "$assets\build.txt" "$tmp\stage\res\build.txt"
+    New-CardsfolderZip "$tmp\stage\res\cardsfolder\cardsfolder.zip"
+    & "$JDK\bin\jar.exe" cMf "$tmp\res.zip" -C "$tmp\stage" res
+    if ($LASTEXITCODE -ne 0) { throw "res.zip build failed" }
+    Write-Host "  res.zip: $([math]::Round((Get-Item "$tmp\res.zip").Length/1MB,1)) MB"
+
+    adb push "$tmp\res.zip" "$DEVICE_ASSETS/res.zip" | Select-Object -Last 1
+    adb shell "cd $DEVICE_ASSETS && rm -rf res.old && mv res res.old && unzip -q -o res.zip && rm res.zip && printf %s '$version' > version.txt"
+    if ($LASTEXITCODE -ne 0) { throw "on-device res unpack failed" }
+    Write-Host "  Device res replaced (previous kept at res.old), version.txt = $version"
     Remove-Item -Recurse -Force $tmp
 }
 
@@ -77,6 +106,14 @@ if ($PushOnly) {
     Push-Data
     adb shell am force-stop forge.app | Out-Null
     Write-Host "  Forge force-stopped — changes take effect on next launch."
+    exit 0
+}
+
+if ($ResOnly) {
+    Step "Pushing res only"
+    adb shell am force-stop forge.app | Out-Null
+    Push-Res
+    adb shell am force-stop forge.app | Out-Null
     exit 0
 }
 
@@ -140,10 +177,7 @@ Step "Signing APK"
 # BOTH laptop and desktop must use this keystore. If APKs are signed with different
 # keystores, 'adb install -r' fails with INSTALL_FAILED_UPDATE_INCOMPATIBLE and you
 # must 'adb uninstall forge.app' first (app data on /sdcard is preserved).
-# uber-apk-signer does not follow Windows junctions — use the real path, not C:\f\.
-$realSigner = "$FORGE\forge-gui-android\tools\uber-apk-signer.jar" -replace "^C:\\f\\", "C:\Users\billy\Documents\forge\"
-if (-not (Test-Path $realSigner)) { $realSigner = $SIGNER }   # try junction path anyway
-& "$JDK\bin\java.exe" -jar $realSigner `
+& "$JDK\bin\java.exe" -jar $SIGNER `
     --apks $outApk `
     --ks $KEYSTORE `
     --ksAlias $KS_ALIAS `
@@ -160,17 +194,19 @@ Write-Host "Signed APK: $signedApk"
 # ── 5. Install ───────────────────────────────────────────────────────────────
 Step "Installing APK"
 # Force-stop first so the new APK and card files take effect immediately on launch.
-adb shell am force-stop forge.app 2>&1 | Out-Null
+adb shell am force-stop forge.app | Out-Null
 # On signing key mismatch: adb uninstall forge.app, then re-run.
-adb install -r $signedApk 2>&1
+# No 2>&1: under PS 5.1 + ErrorActionPreference=Stop, adb's normal stderr chatter
+# ("All files should be loaded...") becomes a terminating error.
+adb install -r $signedApk
 if ($LASTEXITCODE -ne 0) { throw "adb install failed" }
 
-# ── 6. Push data files ───────────────────────────────────────────────────────
-Step "Pushing data files"
-Push-Data
+# ── 6. Push res (card data, cube/draft files) ────────────────────────────────
+Step "Pushing res to device"
+Push-Res
 
 # Force-stop again after data push so Forge re-reads card files on next launch.
-adb shell am force-stop forge.app 2>&1 | Out-Null
+adb shell am force-stop forge.app | Out-Null
 Write-Host "  Forge force-stopped — changes take effect on next launch."
 
 Step "Done"

@@ -88,11 +88,11 @@
 #88|Memory Lapse|C|CUSTOM
 #89|Phlage, Titan of Fire's Fury|C|CUSTOM
 #90|Mystic Confluence|C|CUSTOM
-#91|Indris, the Hydrostatic Surge|C|CUSTOM
-#92|Parallax Wave|C|CUSTOM
-#93|Nadu, Winged Wisdom|C|CUSTOM
+#91|Parallax Wave|C|CUSTOM
+#92|Nadu, Winged Wisdom|C|CUSTOM
+#93|Mox Opal|C|CUSTOM
 #94|Feywild Caretaker|C|CUSTOM
-#95|Mox Opal|C|CUSTOM
+#95|Lutri, the Spellchaser|C|CUSTOM
 #96|Underground Sea|C|CUSTOM
 #97|Balance|C|CUSTOM
 #98|Caves of Chaos Adventurer|C|CUSTOM
