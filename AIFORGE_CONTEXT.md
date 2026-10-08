@@ -16,7 +16,9 @@ for a Pixel 9 Pro XL. Hand this file to Claude Code on desktop or laptop as star
 - **Inputs (not in git), desktop `C:\Users\billy\Downloads`:** CubeCobra exports `AIForge (N).dck`
   (highest N = newest), 17lands exports `card-ratings-YYYY-MM-DD.csv`.
 - **Tools (in git), `forge-gui-android/tools/`:** `update_cube.py` (apply a CubeCobra export),
-  `rerank.py` (build `AIForgeRankings.txt`), plus `build-aiforge.ps1` one level up (build/deploy).
+  `rerank.py` (build `AIForgeRankings.txt`), `cube_diff.py` (describe swaps for the changelog),
+  plus `build-aiforge.ps1` one level up (build/deploy).
+- **`CUBE_CHANGELOG.md`** (repo root): one entry per cube update, newest first.
 
 ---
 
@@ -34,7 +36,13 @@ Run from the checkout root; the user downloads the export from CubeCobra into Do
      to `FLAVOR_NAMES` in `rerank.py` or the card isn't in Forge yet (then update upstream first).
 2. Rerank (next section) — the export's order *is* the ELO baseline, so always rerank after a cube
    change, using the same new export.
-3. Deploy: `.\forge-gui-android\build-aiforge.ps1 -PushOnly`, commit, push.
+3. Describe the swaps: `python forge-gui-android/tools/cube_diff.py` (committed HEAD vs working
+   tree; or `--from <rev> --to <rev>`). Prints `old card (#old rank) -> new card (#new rank), color
+   type; similar to <existing card> (#rank)`. Pairs old->new by same colors, then same color group,
+   then leftovers; "similar to" = an existing cube card in the same color group (single color /
+   multicolor / colorless), same broad type preferred, nearest in the new rankings. Add the output
+   as a new dated entry at the top of `CUBE_CHANGELOG.md` and in the commit message.
+4. Deploy: `.\forge-gui-android\build-aiforge.ps1 -PushOnly`, commit, push.
 
 ## Workflow: new 17lands data
 
