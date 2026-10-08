@@ -19,8 +19,7 @@ Proclamation, Backup Plan, Double Stroke) and custom cards (Gleemox).
 - `forge-gui/res/cube/AIForge.dck` — 282 main + 3 conspiracy cards, no set codes, UTF-8 LF
 - `forge-gui/res/draft/AIForge.draft` — Singleton, 6 players, 3 packs of 15, CustomRankings
 - `forge-gui/res/draft/AIForgeRankings.txt` — 287 entries, #1 Black Lotus, #2 Gleemox
-- `forge-gui/res/cube/AADoubleForge.dck` — secondary cube (keep, don't modify)
-- `forge-gui/res/draft/AADoubleForge.draft` / `AADoubleForgeRankings.txt` — same
+- AIForge is the only custom cube. The secondary AADoubleForge cube was removed 2026-10-07.
 
 ### Modified card scripts
 - `forge-gui/res/cardsfolder/g/gleemox.txt` — removed `DeckLimit:0` ban
