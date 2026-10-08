@@ -292,8 +292,12 @@ cards with `AI:RemoveDeck:All` may still be drafted but played badly.
 ## Card Rankings Summary
 - Regenerate with `Downloadserank.py <baseline> <17lands csv> <out>`. The baseline is the CubeCobra
   `.dck` export **reversed** (the export is ELO-ordered worst->best), written as `#N|Name|C|CUSTOM`.
-  Current file (2026-10-07): `AIForgeRankings_baseline_2026-10-07.txt` (from `AIForge (4).dck`) +
-  `card-ratings-2026-09-04 (1).csv` (ATA/ALSA export). Cards without 17lands data stay at ELO.
+  Multiple 17lands files can be given newest-first: each card uses the first file that has
+  ATA/ALSA for it, then all are sorted together (same pick-position scale); cards in none stay
+  at ELO. Current file (2026-10-07):
+  `rerank.py AIForgeRankings_baseline_2026-10-07.txt card-ratings-2026-10-07.csv "card-ratings-2026-09-04 (1).csv" out.txt`
+  (baseline from `AIForge (4).dck`; 10-07 = last 2 weeks, primary; 245 cards from 10-07, 8 from
+  09-04, 32 at ELO). Don't add the 08-12 export: it's GIH WR, a different scale (script refuses).
 - When updating the cube from a CubeCobra export, take only the adds/removes (and order) from it.
   **Keep the repo's set code for every card already in the cube** — those printings were hand-fixed
   for art and the CubeCobra export reverts them.
