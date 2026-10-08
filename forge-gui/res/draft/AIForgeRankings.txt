@@ -17,34 +17,34 @@
 #17|Oracle of the Alpha|C|CUSTOM
 #18|Force of Will|C|CUSTOM
 #19|Tamiyo, Inquisitive Student|C|CUSTOM
-#20|White Plume Adventurer|C|CUSTOM
-#21|Hullbreacher|C|CUSTOM
-#22|Ragavan, Nimble Pilferer|C|CUSTOM
-#23|Timetwister|C|CUSTOM
-#24|Karakas|C|CUSTOM
-#25|Mox Diamond|C|CUSTOM
+#20|Hullbreacher|C|CUSTOM
+#21|Ragavan, Nimble Pilferer|C|CUSTOM
+#22|Timetwister|C|CUSTOM
+#23|Karakas|C|CUSTOM
+#24|Mox Diamond|C|CUSTOM
+#25|White Plume Adventurer|C|CUSTOM
 #26|Forth Eorlingas!|C|CUSTOM
 #27|Broadside Bombardiers|C|CUSTOM
 #28|Minsc & Boo, Timeless Heroes|C|CUSTOM
-#29|Psychic Frog|C|CUSTOM
-#30|Swords to Plowshares|C|CUSTOM
-#31|Demonic Tutor|C|CUSTOM
-#32|Tolarian Academy|C|CUSTOM
-#33|Ajani, Nacatl Pariah|C|CUSTOM
-#34|Scalding Tarn|C|CUSTOM
-#35|Reanimate|C|CUSTOM
-#36|Polluted Delta|C|CUSTOM
-#37|Double Stroke|C|CUSTOM
-#38|Fable of the Mirror-Breaker|C|CUSTOM
-#39|Strip Mine|C|CUSTOM
-#40|Backup Plan|C|CUSTOM
+#29|Backup Plan|C|CUSTOM
+#30|Psychic Frog|C|CUSTOM
+#31|Swords to Plowshares|C|CUSTOM
+#32|Demonic Tutor|C|CUSTOM
+#33|Tolarian Academy|C|CUSTOM
+#34|Ajani, Nacatl Pariah|C|CUSTOM
+#35|Scalding Tarn|C|CUSTOM
+#36|Reanimate|C|CUSTOM
+#37|Advantageous Proclamation|C|CUSTOM
+#38|Polluted Delta|C|CUSTOM
+#39|Fable of the Mirror-Breaker|C|CUSTOM
+#40|Strip Mine|C|CUSTOM
 #41|Pyrogoyf|C|CUSTOM
 #42|Urza's Saga|C|CUSTOM
 #43|Booster Tutor|C|CUSTOM
 #44|Sheoldred, the Apocalypse|C|CUSTOM
-#45|Flooded Strand|C|CUSTOM
-#46|Urza, Lord High Artificer|C|CUSTOM
-#47|Seasoned Dungeoneer|C|CUSTOM
+#45|Seasoned Dungeoneer|C|CUSTOM
+#46|Flooded Strand|C|CUSTOM
+#47|Urza, Lord High Artificer|C|CUSTOM
 #48|Misty Rainforest|C|CUSTOM
 #49|Oko, Thief of Crowns|C|CUSTOM
 #50|Ocelot Pride|C|CUSTOM
@@ -57,7 +57,7 @@
 #57|Arid Mesa|C|CUSTOM
 #58|Mana Leak|C|CUSTOM
 #59|Lightning Bolt|C|CUSTOM
-#60|Advantageous Proclamation|C|CUSTOM
+#60|Double Stroke|C|CUSTOM
 #61|Ancient Tomb|C|CUSTOM
 #62|Ugin, Eye of the Storms|C|CUSTOM
 #63|Fury|C|CUSTOM
@@ -66,219 +66,219 @@
 #66|Chrome Mox|C|CUSTOM
 #67|Counterspell|C|CUSTOM
 #68|Fractured Identity|C|CUSTOM
-#69|Archon of Cruelty|C|CUSTOM
-#70|Stock Up|C|CUSTOM
-#71|Guide of Souls|C|CUSTOM
-#72|Marsh Flats|C|CUSTOM
-#73|Phelia, Exuberant Shepherd|C|CUSTOM
-#74|Skullclamp|C|CUSTOM
-#75|Wooded Foothills|C|CUSTOM
-#76|Grim Monolith|C|CUSTOM
-#77|Wheel of Fortune|C|CUSTOM
-#78|Verdant Catacombs|C|CUSTOM
-#79|Atraxa, Grand Unifier|C|CUSTOM
-#80|Vampiric Tutor|C|CUSTOM
-#81|Solitude|C|CUSTOM
-#82|Prismatic Vista|C|CUSTOM
-#83|Remand|C|CUSTOM
-#84|Snapcaster Mage|C|CUSTOM
-#85|Windswept Heath|C|CUSTOM
-#86|Palace Jailer|C|CUSTOM
-#87|Barrowgoyf|C|CUSTOM
-#88|Memory Lapse|C|CUSTOM
-#89|Phlage, Titan of Fire's Fury|C|CUSTOM
-#90|Mystic Confluence|C|CUSTOM
-#91|Parallax Wave|C|CUSTOM
-#92|Nadu, Winged Wisdom|C|CUSTOM
-#93|Mox Opal|C|CUSTOM
-#94|Feywild Caretaker|C|CUSTOM
-#95|Lutri, the Spellchaser|C|CUSTOM
-#96|Underground Sea|C|CUSTOM
-#97|Balance|C|CUSTOM
-#98|Caves of Chaos Adventurer|C|CUSTOM
-#99|Volcanic Island|C|CUSTOM
-#100|Cori-Steel Cutter|C|CUSTOM
-#101|Elspeth, Storm Slayer|C|CUSTOM
-#102|Badgermole Cub|C|CUSTOM
-#103|Entomb|C|CUSTOM
-#104|Vivi Ornitier|C|CUSTOM
-#105|Voice of Victory|C|CUSTOM
-#106|Undermountain Adventurer|C|CUSTOM
-#107|Lotus Petal|C|CUSTOM
-#108|Sneak Attack|C|CUSTOM
-#109|Emperor of Bones|C|CUSTOM
-#110|Necromancy|C|CUSTOM
-#111|Toxic Deluge|C|CUSTOM
-#112|Sensei's Divining Top|C|CUSTOM
-#113|Birds of Paradise|C|CUSTOM
-#114|Jace, Vryn's Prodigy|C|CUSTOM
-#115|Wasteland|C|CUSTOM
-#116|Retrofitter Foundry|C|CUSTOM
-#117|Luminarch Aspirant|C|CUSTOM
-#118|Death-Greeter's Champion|C|CUSTOM
-#119|Mother of Runes|C|CUSTOM
-#120|Path to Exile|C|CUSTOM
-#121|Echo of Eons|C|CUSTOM
-#122|Tundra|C|CUSTOM
-#123|Lion's Eye Diamond|C|CUSTOM
-#124|Teferi, Hero of Dominaria|C|CUSTOM
-#125|Tropical Island|C|CUSTOM
-#126|Plateau|C|CUSTOM
-#127|Snuff Out|C|CUSTOM
-#128|Watery Grave|C|CUSTOM
-#129|Currency Converter|C|CUSTOM
-#130|Fiery Confluence|C|CUSTOM
-#131|Mishra's Bauble|C|CUSTOM
-#132|Ponder|C|CUSTOM
-#133|Icetill Explorer|C|CUSTOM
-#134|Malcolm, Alluring Scoundrel|C|CUSTOM
-#135|Steam Vents|C|CUSTOM
-#136|Spell Pierce|C|CUSTOM
-#137|Inti, Seneschal of the Sun|C|CUSTOM
-#138|Umezawa's Jitte|C|CUSTOM
-#139|Lórien Revealed|C|CUSTOM
-#140|Occult Epiphany|C|CUSTOM
-#141|Starting Town|C|CUSTOM
-#142|Deep-Cavern Bat|C|CUSTOM
-#143|Reprieve|C|CUSTOM
-#144|Noble Hierarch|C|CUSTOM
-#145|Fastbond|C|CUSTOM
-#146|Screaming Nemesis|C|CUSTOM
-#147|Bitter Triumph|C|CUSTOM
-#148|Mind Twist|C|CUSTOM
-#149|Titania, Protector of Argoth|C|CUSTOM
-#150|Chain Lightning|C|CUSTOM
-#151|Vaultborn Tyrant|C|CUSTOM
-#152|Duress|C|CUSTOM
-#153|Portal to Phyrexia|C|CUSTOM
-#154|Delighted Halfling|C|CUSTOM
-#155|Brazen Borrower|C|CUSTOM
-#156|Badlands|C|CUSTOM
-#157|Displacer Kitten|C|CUSTOM
-#158|Pest Infestation|C|CUSTOM
-#159|Sanguine Evangelist|C|CUSTOM
-#160|Adeline, Resplendent Cathar|C|CUSTOM
-#161|Sacred Foundry|C|CUSTOM
-#162|Fatal Push|C|CUSTOM
-#163|Walking Ballista|C|CUSTOM
-#164|Generous Plunderer|C|CUSTOM
-#165|Brainstorm|C|CUSTOM
-#166|Dark Ritual|C|CUSTOM
-#167|The Fantasticar|C|CUSTOM
-#168|Ignoble Hierarch|C|CUSTOM
-#169|Sage of the Skies|C|CUSTOM
-#170|Lurrus of the Dream-Den|C|CUSTOM
-#171|Flame Slash|C|CUSTOM
-#172|Stoneforge Mystic|C|CUSTOM
-#173|Worldspine Wurm|C|CUSTOM
-#174|Staff of the Storyteller|C|CUSTOM
-#175|Ouroboroid|C|CUSTOM
-#176|Hallowed Fountain|C|CUSTOM
-#177|Relic of Sauron|C|CUSTOM
-#178|Recurring Nightmare|C|CUSTOM
-#179|Bristly Bill, Spine Sower|C|CUSTOM
-#180|Mishra's Workshop|C|CUSTOM
-#181|Fire Covenant|C|CUSTOM
-#182|Undercity Sewers|C|CUSTOM
-#183|Etali, Primal Conqueror|C|CUSTOM
-#184|Breeding Pool|C|CUSTOM
-#185|Hexdrinker|C|CUSTOM
-#186|Karn, Scion of Urza|C|CUSTOM
-#187|Oust|C|CUSTOM
-#188|Malevolent Rumble|C|CUSTOM
-#189|Thundering Falls|C|CUSTOM
-#190|Abrade|C|CUSTOM
-#191|Scythecat Cub|C|CUSTOM
-#192|Sheoldred's Edict|C|CUSTOM
-#193|Woodfall Primus|C|CUSTOM
-#194|Taiga|C|CUSTOM
-#195|Blightsteel Colossus|C|CUSTOM
-#196|Skyclave Apparition|C|CUSTOM
-#197|Baloth Prime|C|CUSTOM
-#198|Blood Crypt|C|CUSTOM
-#199|Third Path Iconoclast|C|CUSTOM
-#200|Wrenn and Six|C|CUSTOM
-#201|Fallen Shinobi|C|CUSTOM
-#202|Upheaval|C|CUSTOM
-#203|Formidable Speaker|C|CUSTOM
-#204|Through the Breach|C|CUSTOM
-#205|Dauthi Voidwalker|C|CUSTOM
-#206|Bayou|C|CUSTOM
-#207|Troll of Khazad-dûm|C|CUSTOM
-#208|Lightning Greaves|C|CUSTOM
-#209|Super Shredder|C|CUSTOM
-#210|Springheart Nantuko|C|CUSTOM
-#211|Elite Spellbinder|C|CUSTOM
-#212|Sicarian Infiltrator|C|CUSTOM
-#213|Sewer-veillance Cam|C|CUSTOM
+#69|Feywild Caretaker|C|CUSTOM
+#70|Archon of Cruelty|C|CUSTOM
+#71|Stock Up|C|CUSTOM
+#72|Caves of Chaos Adventurer|C|CUSTOM
+#73|Guide of Souls|C|CUSTOM
+#74|Marsh Flats|C|CUSTOM
+#75|Phelia, Exuberant Shepherd|C|CUSTOM
+#76|Skullclamp|C|CUSTOM
+#77|Wooded Foothills|C|CUSTOM
+#78|Grim Monolith|C|CUSTOM
+#79|Wheel of Fortune|C|CUSTOM
+#80|Verdant Catacombs|C|CUSTOM
+#81|Atraxa, Grand Unifier|C|CUSTOM
+#82|Vampiric Tutor|C|CUSTOM
+#83|Solitude|C|CUSTOM
+#84|Prismatic Vista|C|CUSTOM
+#85|Remand|C|CUSTOM
+#86|Snapcaster Mage|C|CUSTOM
+#87|Windswept Heath|C|CUSTOM
+#88|Barrowgoyf|C|CUSTOM
+#89|Memory Lapse|C|CUSTOM
+#90|Phlage, Titan of Fire's Fury|C|CUSTOM
+#91|Mystic Confluence|C|CUSTOM
+#92|Parallax Wave|C|CUSTOM
+#93|Undermountain Adventurer|C|CUSTOM
+#94|Nadu, Winged Wisdom|C|CUSTOM
+#95|Palace Jailer|C|CUSTOM
+#96|The Fantasticar|C|CUSTOM
+#97|Mox Opal|C|CUSTOM
+#98|Lutri, the Spellchaser|C|CUSTOM
+#99|Underground Sea|C|CUSTOM
+#100|Balance|C|CUSTOM
+#101|Volcanic Island|C|CUSTOM
+#102|Sensei's Divining Top|C|CUSTOM
+#103|Cori-Steel Cutter|C|CUSTOM
+#104|Elspeth, Storm Slayer|C|CUSTOM
+#105|Badgermole Cub|C|CUSTOM
+#106|Entomb|C|CUSTOM
+#107|Vivi Ornitier|C|CUSTOM
+#108|Voice of Victory|C|CUSTOM
+#109|Lotus Petal|C|CUSTOM
+#110|Sneak Attack|C|CUSTOM
+#111|Emperor of Bones|C|CUSTOM
+#112|Necromancy|C|CUSTOM
+#113|Toxic Deluge|C|CUSTOM
+#114|Birds of Paradise|C|CUSTOM
+#115|Jace, Vryn's Prodigy|C|CUSTOM
+#116|Wasteland|C|CUSTOM
+#117|Retrofitter Foundry|C|CUSTOM
+#118|Luminarch Aspirant|C|CUSTOM
+#119|Death-Greeter's Champion|C|CUSTOM
+#120|Mother of Runes|C|CUSTOM
+#121|Path to Exile|C|CUSTOM
+#122|Echo of Eons|C|CUSTOM
+#123|Tundra|C|CUSTOM
+#124|Lion's Eye Diamond|C|CUSTOM
+#125|Bilbo, Thief in the Night|C|CUSTOM
+#126|Teferi, Hero of Dominaria|C|CUSTOM
+#127|Tropical Island|C|CUSTOM
+#128|Plateau|C|CUSTOM
+#129|Snuff Out|C|CUSTOM
+#130|Watery Grave|C|CUSTOM
+#131|Currency Converter|C|CUSTOM
+#132|Fiery Confluence|C|CUSTOM
+#133|Occult Epiphany|C|CUSTOM
+#134|Mishra's Bauble|C|CUSTOM
+#135|Ponder|C|CUSTOM
+#136|Icetill Explorer|C|CUSTOM
+#137|Malcolm, Alluring Scoundrel|C|CUSTOM
+#138|Steam Vents|C|CUSTOM
+#139|Spell Pierce|C|CUSTOM
+#140|Inti, Seneschal of the Sun|C|CUSTOM
+#141|Gitaxian Probe|C|CUSTOM
+#142|Umezawa's Jitte|C|CUSTOM
+#143|Lórien Revealed|C|CUSTOM
+#144|Starting Town|C|CUSTOM
+#145|Deep-Cavern Bat|C|CUSTOM
+#146|Relic of Sauron|C|CUSTOM
+#147|Reprieve|C|CUSTOM
+#148|Noble Hierarch|C|CUSTOM
+#149|Fastbond|C|CUSTOM
+#150|True-Name Nemesis|C|CUSTOM
+#151|Screaming Nemesis|C|CUSTOM
+#152|Bitter Triumph|C|CUSTOM
+#153|Mind Twist|C|CUSTOM
+#154|Titania, Protector of Argoth|C|CUSTOM
+#155|Chain Lightning|C|CUSTOM
+#156|Vaultborn Tyrant|C|CUSTOM
+#157|Duress|C|CUSTOM
+#158|Portal to Phyrexia|C|CUSTOM
+#159|Delighted Halfling|C|CUSTOM
+#160|Brazen Borrower|C|CUSTOM
+#161|Pyroblast|C|CUSTOM
+#162|Badlands|C|CUSTOM
+#163|Displacer Kitten|C|CUSTOM
+#164|Pest Infestation|C|CUSTOM
+#165|Sanguine Evangelist|C|CUSTOM
+#166|Walking Ballista|C|CUSTOM
+#167|Blightsteel Colossus|C|CUSTOM
+#168|Sacred Foundry|C|CUSTOM
+#169|Fatal Push|C|CUSTOM
+#170|Generous Plunderer|C|CUSTOM
+#171|Brainstorm|C|CUSTOM
+#172|Dark Ritual|C|CUSTOM
+#173|Ignoble Hierarch|C|CUSTOM
+#174|Erode|C|CUSTOM
+#175|Headliner Scarlett|C|CUSTOM
+#176|Sage of the Skies|C|CUSTOM
+#177|Lurrus of the Dream-Den|C|CUSTOM
+#178|Flame Slash|C|CUSTOM
+#179|Stoneforge Mystic|C|CUSTOM
+#180|The Ooze|C|CUSTOM
+#181|Worldspine Wurm|C|CUSTOM
+#182|Staff of the Storyteller|C|CUSTOM
+#183|Ouroboroid|C|CUSTOM
+#184|Hallowed Fountain|C|CUSTOM
+#185|Bristly Bill, Spine Sower|C|CUSTOM
+#186|Mishra's Workshop|C|CUSTOM
+#187|Fire Covenant|C|CUSTOM
+#188|Undercity Sewers|C|CUSTOM
+#189|Etali, Primal Conqueror|C|CUSTOM
+#190|Breeding Pool|C|CUSTOM
+#191|Karn, Scion of Urza|C|CUSTOM
+#192|Hexdrinker|C|CUSTOM
+#193|Oust|C|CUSTOM
+#194|Malevolent Rumble|C|CUSTOM
+#195|Thundering Falls|C|CUSTOM
+#196|Abrade|C|CUSTOM
+#197|Scythecat Cub|C|CUSTOM
+#198|Sheoldred's Edict|C|CUSTOM
+#199|Woodfall Primus|C|CUSTOM
+#200|Taiga|C|CUSTOM
+#201|Skyclave Apparition|C|CUSTOM
+#202|Blood Crypt|C|CUSTOM
+#203|Wrenn and Six|C|CUSTOM
+#204|Chaos Defiler|C|CUSTOM
+#205|Fallen Shinobi|C|CUSTOM
+#206|Baloth Prime|C|CUSTOM
+#207|Formidable Speaker|C|CUSTOM
+#208|Dauthi Voidwalker|C|CUSTOM
+#209|Bayou|C|CUSTOM
+#210|Troll of Khazad-dûm|C|CUSTOM
+#211|Lightning Greaves|C|CUSTOM
+#212|Springheart Nantuko|C|CUSTOM
+#213|Elite Spellbinder|C|CUSTOM
 #214|Pyrokinesis|C|CUSTOM
 #215|Chromatic Star|C|CUSTOM
-#216|Tersa Lightshatter|C|CUSTOM
-#217|Torsten, Founder of Benalia|C|CUSTOM
-#218|Scrubland|C|CUSTOM
-#219|Goblin Bombardment|C|CUSTOM
+#216|Mawloc|C|CUSTOM
+#217|Tersa Lightshatter|C|CUSTOM
+#218|Torsten, Founder of Benalia|C|CUSTOM
+#219|Scrubland|C|CUSTOM
 #220|Unholy Heat|C|CUSTOM
 #221|Meticulous Archive|C|CUSTOM
-#222|Get Lost|C|CUSTOM
-#223|Mawloc|C|CUSTOM
-#224|Coveted Jewel|C|CUSTOM
-#225|Magda, Brazen Outlaw|C|CUSTOM
-#226|Tamiyo, Collector of Tales|C|CUSTOM
-#227|Containment Priest|C|CUSTOM
-#228|Six|C|CUSTOM
-#229|Headliner Scarlett|C|CUSTOM
-#230|Once Upon a Time|C|CUSTOM
-#231|From the Catacombs|C|CUSTOM
-#232|Aether Spellbomb|C|CUSTOM
-#233|The Mightstone and Weakstone|C|CUSTOM
-#234|Pentad Prism|C|CUSTOM
-#235|Kaldra Compleat|C|CUSTOM
-#236|Ravenous Robots|C|CUSTOM
-#237|Chaos Defiler|C|CUSTOM
-#238|Dark Confidant|C|CUSTOM
-#239|Stomping Ground|C|CUSTOM
-#240|Seasoned Pyromancer|C|CUSTOM
-#241|Hedge Maze|C|CUSTOM
-#242|Fanatic of Rhonas|C|CUSTOM
-#243|Ursine Monstrosity|C|CUSTOM
-#244|Green Sun's Zenith|C|CUSTOM
-#245|The Ooze|C|CUSTOM
-#246|Elegant Parlor|C|CUSTOM
-#247|Figure of Fable|C|CUSTOM
-#248|Reckoner Bankbuster|C|CUSTOM
-#249|Ivora, Insatiable Heir|C|CUSTOM
-#250|Thalia, Guardian of Thraben|C|CUSTOM
-#251|Sentinel of the Nameless City|C|CUSTOM
-#252|Bolas's Citadel|C|CUSTOM
-#253|Overgrown Tomb|C|CUSTOM
-#254|Soul-Guide Lantern|C|CUSTOM
-#255|Raucous Theater|C|CUSTOM
-#256|Savannah|C|CUSTOM
-#257|Goblin Welder|C|CUSTOM
-#258|Legion Extruder|C|CUSTOM
-#259|Questing Beast|C|CUSTOM
-#260|Sunfall|C|CUSTOM
-#261|Sylvan Safekeeper|C|CUSTOM
-#262|Godless Shrine|C|CUSTOM
-#263|Tireless Tracker|C|CUSTOM
-#264|Oliphaunt|C|CUSTOM
-#265|Yawgmoth's Will|C|CUSTOM
-#266|Council's Judgment|C|CUSTOM
-#267|Caustic Bronco|C|CUSTOM
-#268|Zuran Orb|C|CUSTOM
-#269|Candelabra of Tawnos|C|CUSTOM
-#270|Underground Mortuary|C|CUSTOM
-#271|Oath of Druids|C|CUSTOM
-#272|Lingering Souls|C|CUSTOM
-#273|Commercial District|C|CUSTOM
-#274|Cogwork Librarian|C|CUSTOM
-#275|Cathar Commando|C|CUSTOM
-#276|Eternal Witness|C|CUSTOM
-#277|Temple Garden|C|CUSTOM
-#278|Shadowy Backstreet|C|CUSTOM
-#279|Generous Ent|C|CUSTOM
-#280|Eagles of the North|C|CUSTOM
-#281|Lore Seeker|C|CUSTOM
+#222|Coveted Jewel|C|CUSTOM
+#223|Magda, Brazen Outlaw|C|CUSTOM
+#224|Tamiyo, Collector of Tales|C|CUSTOM
+#225|Containment Priest|C|CUSTOM
+#226|Six|C|CUSTOM
+#227|Once Upon a Time|C|CUSTOM
+#228|Aether Spellbomb|C|CUSTOM
+#229|The Mightstone and Weakstone|C|CUSTOM
+#230|Emeritus of Abundance|C|CUSTOM
+#231|Pentad Prism|C|CUSTOM
+#232|Pinnacle Emissary|C|CUSTOM
+#233|Kaldra Compleat|C|CUSTOM
+#234|Dark Confidant|C|CUSTOM
+#235|Stomping Ground|C|CUSTOM
+#236|Seasoned Pyromancer|C|CUSTOM
+#237|Raph & Mikey, Troublemakers|C|CUSTOM
+#238|Hedge Maze|C|CUSTOM
+#239|Fanatic of Rhonas|C|CUSTOM
+#240|Green Sun's Zenith|C|CUSTOM
+#241|Through the Breach|C|CUSTOM
+#242|From the Catacombs|C|CUSTOM
+#243|Cogwork Librarian|C|CUSTOM
+#244|Elegant Parlor|C|CUSTOM
+#245|Figure of Fable|C|CUSTOM
+#246|Reckoner Bankbuster|C|CUSTOM
+#247|Ivora, Insatiable Heir|C|CUSTOM
+#248|Thalia, Guardian of Thraben|C|CUSTOM
+#249|Sentinel of the Nameless City|C|CUSTOM
+#250|Bolas's Citadel|C|CUSTOM
+#251|Council's Judgment|C|CUSTOM
+#252|Overgrown Tomb|C|CUSTOM
+#253|Soul-Guide Lantern|C|CUSTOM
+#254|Raucous Theater|C|CUSTOM
+#255|Savannah|C|CUSTOM
+#256|Jennifer Walters|C|CUSTOM
+#257|Legion Extruder|C|CUSTOM
+#258|Questing Beast|C|CUSTOM
+#259|Sunfall|C|CUSTOM
+#260|Sylvan Safekeeper|C|CUSTOM
+#261|Godless Shrine|C|CUSTOM
+#262|Oliphaunt|C|CUSTOM
+#263|Yawgmoth's Will|C|CUSTOM
+#264|Ursine Monstrosity|C|CUSTOM
+#265|Caustic Bronco|C|CUSTOM
+#266|Zuran Orb|C|CUSTOM
+#267|Lore Seeker|C|CUSTOM
+#268|Black Widow, Super Spy|C|CUSTOM
+#269|Clarion Conqueror|C|CUSTOM
+#270|Candelabra of Tawnos|C|CUSTOM
+#271|Underground Mortuary|C|CUSTOM
+#272|Oath of Druids|C|CUSTOM
+#273|Squandered Resources|C|CUSTOM
+#274|Lingering Souls|C|CUSTOM
+#275|Commercial District|C|CUSTOM
+#276|Cathar Commando|C|CUSTOM
+#277|Surrak, Elusive Hunter|C|CUSTOM
+#278|Temple Garden|C|CUSTOM
+#279|Shadowy Backstreet|C|CUSTOM
+#280|Generous Ent|C|CUSTOM
+#281|Eagles of the North|C|CUSTOM
 #282|Tendrils of Agony|C|CUSTOM
 #283|Lush Portico|C|CUSTOM
 #284|Pillage the Bog|C|CUSTOM

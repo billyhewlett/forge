@@ -290,10 +290,13 @@ cards with `AI:RemoveDeck:All` may still be drafted but played badly.
 ---
 
 ## Card Rankings Summary
-- Regenerate with `Downloads\rerank.py <baseline> <17lands csv> <out>`. Current file is reproduced
-  exactly by `AIForgeRankings_baseline.txt` + `card-ratings-2026-09-04 (1).csv` (ATA/ALSA export),
-  with one edit: Indris -> Lutri, the Spellchaser at baseline #91 (lands at #95). Lutri was
-  restored 2026-10-07, reversing the 2026-08-14 Indris swap.
+- Regenerate with `Downloadserank.py <baseline> <17lands csv> <out>`. The baseline is the CubeCobra
+  `.dck` export **reversed** (the export is ELO-ordered worst->best), written as `#N|Name|C|CUSTOM`.
+  Current file (2026-10-07): `AIForgeRankings_baseline_2026-10-07.txt` (from `AIForge (4).dck`) +
+  `card-ratings-2026-09-04 (1).csv` (ATA/ALSA export). Cards without 17lands data stay at ELO.
+- When updating the cube from a CubeCobra export, take only the adds/removes (and order) from it.
+  **Keep the repo's set code for every card already in the cube** — those printings were hand-fixed
+  for art and the CubeCobra export reverts them.
 - `setSizes.get("CUSTOM")` = 285 (max rank in AIForgeRankings.txt = #285 Outland Liberator)
 - `ReadDraftRankings.getRanking()` returns `rank / maxRank` as float 0–1
 - `CardRanker.getRawScore()` converts to 0–100: `100 - (100 * rkg)`
