@@ -106,6 +106,23 @@ Proclamation, Backup Plan, Double Stroke) and custom cards (Gleemox).
 - Double Stroke timing, Luminarch Aspirant main-phase casting (`SetStateAi.java`, card script)
 - Entomb picks real graveyard targets (big creatures, Echo of Eons; never planeswalkers)
 
+### AI fixes (2026-10-11) — tests: `forge-gui-desktop/.../ai/ability/AIForgeCardAiTest.java`
+- **Double Stroke:** names the best cube-ranked instant/sorcery in its own deck, no counterspells
+  (`AgendaLogic:BestCopyableSpellInComputerDeck`); if none, names nothing → conspiracy not used
+  (was "Morphling"). Copy trigger has `AILogic$ Always` (AI declined every optional copy before).
+- **Cube rankings in-game:** `HostedMatch.startMatch(..., cubeName)` loads the cube pool and the
+  .draft's CustomRankings into `GameRules` (`getCubeDraftRanking(name)`) for in-game AI choices.
+- **Entomb:** never Blightsteel (replacement, never in graveyard); Worldspine-style shufflers only
+  with affordable instant reanimation (Necromancy is the only one in the cube). AI responds to the
+  shuffle trigger with Necromancy (`ChangeZoneAi.isGraveyardShuffleTrigger`, AiController
+  must-respond, PermanentAi MayFlashSac exception).
+- **Skullclamp:** `AttachAi.chooseDiesForValueFodder` — equip onto own tokens/low-value creatures it
+  kills, repeatedly.
+- **Broadside Bombardiers:** `SpecialCardAi.BroadsideBombardiers` (`AILogic$ BroadsideBombardiers`):
+  lethal → trade up → doomed fodder. Boast only works after it attacked, so the earliest use is the
+  declare-attackers step (kill a blocker before blocks), not beginning of combat. Chosen fodder is
+  passed to cost payment via `ComputerUtil.setPlannedSacrifice`.
+
 ### Desktop cursor scaling (phone-style UI on PC, 2026-10-11)
 - The libGDX UI's custom 32px cursor ignored Windows display scaling and pointer size (tiny on the
   4K/200% desktop with pointer size 4). `GameLauncher.getSystemCursorScale()` (forge-gui-mobile-dev,
