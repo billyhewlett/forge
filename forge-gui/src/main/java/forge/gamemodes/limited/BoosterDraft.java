@@ -564,6 +564,16 @@ public class BoosterDraft implements IBoosterDraft {
         return customs;
     }
 
+    /** CustomRankings file of the custom draft (.draft) for this cube name, or null if none. */
+    public static String getCustomRankingsFileName(final String cubeName) {
+        for (CustomLimited cl : loadCustomDrafts()) {
+            if (cl.getCubeName().equals(cubeName)) {
+                return cl.getCustomRankingsFileName();
+            }
+        }
+        return null;
+    }
+
     @Override
     public CardPool nextChoice() {
         // Primary draft loop - Computer Chooses from their packs, you choose form your packs

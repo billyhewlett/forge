@@ -9,6 +9,7 @@ import com.google.common.eventbus.Subscribe;
 import forge.LobbyPlayer;
 import forge.StaticData;
 import forge.ai.AiProfileUtil;
+import forge.deck.Deck;
 import forge.game.*;
 import forge.game.event.GameEvent;
 import forge.game.event.GameEventSubgameEnd;
@@ -18,6 +19,8 @@ import forge.game.event.IGameEventVisitor;
 import forge.game.player.Player;
 import forge.game.player.PlayerView;
 import forge.game.player.RegisteredPlayer;
+import forge.gamemodes.limited.BoosterDraft;
+import forge.gamemodes.limited.ReadDraftRankings;
 import forge.gamemodes.net.NetworkGameEventListener;
 import forge.gamemodes.net.server.HostingServer;
 import forge.item.PaperCard;
@@ -104,10 +107,37 @@ public class HostedMatch {
     public void startMatch(final GameType gameType, final Set<GameType> appliedVariants, final List<RegisteredPlayer> players, final RegisteredPlayer human, final IGuiGame gui) {
         startMatch(getDefaultRules(gameType), appliedVariants, players, human, gui);
     }
-    public void startMatch(final GameType gameType, final Set<GameType> appliedVariants, final List<RegisteredPlayer> players, final RegisteredPlayer human, final IGuiGame gui, final List<PaperCard> cubeCardPool) {
+    /** Match from a cube draft: cubeName (the deck's "cube" draft note, may be null) supplies the
+     *  cube's card pool (Booster Tutor) and draft rankings (in-game AI card choices) to the rules. */
+    public void startMatch(final GameType gameType, final Set<GameType> appliedVariants, final List<RegisteredPlayer> players, final RegisteredPlayer human, final IGuiGame gui, final String cubeName) {
         final GameRules rules = getDefaultRules(gameType);
-        rules.setCubeCardPool(cubeCardPool);
+        applyCube(rules, cubeName);
         startMatch(rules, appliedVariants, players, human, gui);
+    }
+
+    private static void applyCube(final GameRules rules, final String cubeName) {
+        if (cubeName == null) {
+            return;
+        }
+        final Deck cubeDeck = FModel.getDecks().getCubes().get(cubeName);
+        if (cubeDeck == null) {
+            return;
+        }
+        final List<PaperCard> pool = cubeDeck.getMain().toFlatList();
+        rules.setCubeCardPool(pool);
+
+        final String rankingsFile = BoosterDraft.getCustomRankingsFileName(cubeName);
+        if (rankingsFile != null) {
+            final ReadDraftRankings rankings = new ReadDraftRankings(rankingsFile);
+            final Map<String, Double> byName = new HashMap<>();
+            for (PaperCard pc : pool) {
+                final Double rank = rankings.getRanking(pc.getName(), "CUSTOM");
+                if (rank != null) {
+                    byName.put(pc.getName(), rank);
+                }
+            }
+            rules.setCubeDraftRankings(byName);
+        }
     }
     public void startMatch(final GameType gameType, final Set<GameType> appliedVariants, final List<RegisteredPlayer> players, final Map<RegisteredPlayer, IGuiGame> guis) {
         startMatch(getDefaultRules(gameType), appliedVariants, players, guis, null);

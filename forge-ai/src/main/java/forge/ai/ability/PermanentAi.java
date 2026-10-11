@@ -30,8 +30,11 @@ public class PermanentAi extends SpellAbilityAi {
         final Card card = sa.getHostCard();
 
         if (card.hasKeyword("MayFlashSac") && !ai.canCastSorcery()) {
-            // AiPlayDecision.AnotherTime
-            return false;
+            // Exception: Necromancy in response to a creature about to shuffle itself out of the
+            // graveyard (Worldspine Wurm). It's sacrificed at cleanup, but that still kills the Wurm.
+            // Otherwise AiPlayDecision.AnotherTime
+            return !ai.getGame().getStack().isEmpty()
+                    && ChangeZoneAi.isGraveyardShuffleTrigger(ai.getGame().getStack().peekAbility());
         }
 
         // Wait for Main2 if possible

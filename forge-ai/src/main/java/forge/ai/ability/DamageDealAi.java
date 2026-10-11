@@ -150,6 +150,9 @@ public class DamageDealAi extends DamageAiBase {
         }
 
         String logic = sa.getParamOrDefault("AILogic", "");
+        if ("BroadsideBombardiers".equals(logic)) {
+            return SpecialCardAi.BroadsideBombardiers.consider(ai, sa);
+        }
         if ("DiscardLands".equals(logic)) {
             dmg = 2;
         } else if (logic.startsWith("ProcRaid.")) {

@@ -1539,6 +1539,7 @@ public class AiController {
         if (top != null) {
             mustRespond = top.hasParam("AIRespondsToOwnAbility"); // Forced combos (currently defined for Sensei's Divining Top)
             mustRespond |= top.isTrigger() && top.getTrigger().isKeyword(Keyword.EVOKE); // Evoke sacrifice trigger
+            mustRespond |= ChangeZoneAi.isGraveyardShuffleTrigger(top); // last chance to reanimate (Entomb -> Worldspine Wurm)
         }
 
         if (topOwnedByAI) {

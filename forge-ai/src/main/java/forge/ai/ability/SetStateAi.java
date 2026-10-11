@@ -140,7 +140,9 @@ public class SetStateAi extends SpellAbilityAi {
                 // Flip at the start of our own turn so the trigger is active before we cast
                 // the named spell. (Old logic flipped after the spell was already cast, which
                 // meant the copy trigger never fired because the conspiracy wasn't face-up yet.)
-                return ph.isPlayerTurn(ai);
+                // Also flip as soon as we hold the named card, so an instant cast on the
+                // opponent's turn is copied too.
+                return ph.isPlayerTurn(ai) || ai.getCardsIn(ZoneType.Hand).anyMatch(c -> card.getNamedCards().contains(c.getName()));
             }
 
             // non-permanent facedown can't be turned face up

@@ -1564,6 +1564,18 @@ public class PlayerControllerAi extends PlayerController {
             } else if (logic.equals("MostProminentSpellInComputerDeck")) {
                 CardCollectionView cards = CardLists.getValidCards(aiLibrary, "Card.Instant,Card.Sorcery", player, sa.getHostCard(), sa);
                 name = ComputerUtilCard.getMostProminentCardName(cards);
+            } else if (logic.equals("BestCopyableSpellInComputerDeck")) {
+                // Double Stroke: the best instant/sorcery we're actually playing, by cube draft
+                // rank when this is a cube draft game (Time Walk over Flame Slash), else by CMC.
+                // Counterspells are skipped: copying one rarely does anything.
+                final GameRules rules = getGame().getRules();
+                CardCollectionView cards = CardLists.getValidCards(aiLibrary, "Card.Instant,Card.Sorcery", player, sa.getHostCard(), sa);
+                cards = CardLists.filter(cards, c -> c.getSpellAbilities().stream().noneMatch(s -> s.getApi() == ApiType.Counter));
+                Card best = cards.stream().min(Comparator
+                        .comparingDouble((Card c) -> { Double r = rules.getCubeDraftRanking(c.getName()); return r == null ? 2.0 : r; })
+                        .thenComparing(Comparator.comparingInt((Card c) -> c.getCMC()).reversed()))
+                        .orElse(null);
+                name = best != null ? best.getName() : "";
             } else if (logic.equals("MakeCard")) {
                 name = chooseCardName(sa, StaticData.instance().getCommonCards()
                         .streamAllFaces().filter(cpp).sorted().collect(Collectors.toList()),message);
@@ -1575,6 +1587,11 @@ public class PlayerControllerAi extends PlayerController {
 
             if (!StringUtils.isBlank(name)) {
                 return name;
+            }
+            if (source != null && source.getState(CardStateName.Original).hasKeyword(Keyword.HIDDEN_AGENDA)) {
+                // Nothing in our deck fits this agenda: name nothing, so the conspiracy is left out
+                // of the game (Player.initVariantsZones) instead of naming a card we don't have.
+                return "";
             }
         } else {
             CardCollectionView list = CardLists.filterControlledBy(getGame().getCardsInGame(), player.getOpponents());

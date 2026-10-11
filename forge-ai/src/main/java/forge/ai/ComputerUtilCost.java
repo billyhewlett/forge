@@ -404,6 +404,12 @@ public class ComputerUtilCost {
                 // don't sacrifice the card we're pumping
                 typeList = paymentChoicesWithoutTargets(typeList, sourceAbility, ai);
 
+                // the card's own AI logic already picked what to sacrifice (e.g. Broadside Bombardiers)
+                final Card planned = ComputerUtil.getPlannedSacrifice(source);
+                if (amount == 1 && planned != null && typeList.contains(planned)) {
+                    continue;
+                }
+
                 int count = 0;
                 while (count < amount) {
                     Card prefCard = ComputerUtil.getCardPreference(ai, source, "SacCost", typeList, sourceAbility);

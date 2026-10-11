@@ -42,6 +42,7 @@ import forge.game.player.PlayerCollection;
 import forge.game.player.PlayerPredicates;
 import forge.game.spellability.SpellAbility;
 import forge.game.spellability.SpellAbilityPredicates;
+import forge.game.spellability.SpellAbilityStackInstance;
 import forge.game.spellability.SpellPermanent;
 import forge.game.staticability.StaticAbility;
 import forge.game.trigger.Trigger;
@@ -200,6 +201,116 @@ public class SpecialCardAi {
                 sa.setXManaCostPaid(Math.min(counterNum, libsize));
             }
             return true;
+        }
+    }
+
+    // Broadside Bombardiers: Boast — sacrifice another creature or artifact: deal 2 + its mana value
+    // to any target (only after it attacked; the engine enforces that, so the first chance is the
+    // declare attackers step — killing a would-be blocker before blocks).
+    public static class BroadsideBombardiers {
+        private static final int MIN_TRADE_GAIN = 30;
+
+        public static AiAbilityDecision consider(final Player ai, final SpellAbility sa) {
+            final Card source = sa.getHostCard();
+            ComputerUtil.setPlannedSacrifice(source, null);
+            CardCollection fodder = CardLists.getValidCards(ai.getCardsIn(ZoneType.Battlefield),
+                    new String[] {"Artifact.Other", "Creature.Other"}, ai, source, sa);
+            fodder = CardLists.filter(fodder, CardPredicates.canBeSacrificedBy(sa, false));
+            if (fodder.isEmpty()) {
+                return new AiAbilityDecision(0, AiPlayDecision.CantAfford);
+            }
+
+            // 1. Lethal to the face: sacrifice the cheapest card that gets there, whatever it is
+            for (Player opp : ai.getOpponents()) {
+                if (!sa.canTarget(opp) || !opp.canLoseLife() || opp.cantLoseForZeroOrLessLife()) {
+                    continue;
+                }
+                Card cheapest = null;
+                for (Card f : fodder) {
+                    if (ComputerUtilCombat.predictDamageTo(opp, damage(f), source, false) >= opp.getLife()
+                            && (cheapest == null || sacValue(ai, f, sa) < sacValue(ai, cheapest, sa))) {
+                        cheapest = f;
+                    }
+                }
+                if (cheapest != null) {
+                    return plan(sa, cheapest, opp);
+                }
+            }
+
+            // 2. Kill something clearly worth more than the card we sacrifice (a 1/1 token for a 3/3)
+            Card bestFodder = null;
+            Card bestTarget = null;
+            int bestGain = MIN_TRADE_GAIN;
+            final CardCollection targets = CardLists.filter(ai.getOpponents().getCardsIn(ZoneType.Battlefield),
+                    c -> (c.isCreature() || c.isPlaneswalker()) && sa.canTarget(c));
+            for (Card f : fodder) {
+                final int cost = sacValue(ai, f, sa);
+                for (Card t : targets) {
+                    final int gain = targetValue(t) - cost;
+                    if (gain > bestGain && wouldDie(t, damage(f), source)) {
+                        bestGain = gain;
+                        bestFodder = f;
+                        bestTarget = t;
+                    }
+                }
+            }
+            if (bestTarget != null) {
+                return plan(sa, bestFodder, bestTarget);
+            }
+
+            // 3. Something dying anyway (evoked Fury/Solitude, a creature about to die): free damage
+            for (Card f : fodder) {
+                if (sacValue(ai, f, sa) == 0) {
+                    Card killable = targets.stream().filter(t -> wouldDie(t, damage(f), source))
+                            .max(Comparator.comparingInt(BroadsideBombardiers::targetValue)).orElse(null);
+                    if (killable != null) {
+                        return plan(sa, f, killable);
+                    }
+                    Player opp = ai.getWeakestOpponent();
+                    if (opp != null && sa.canTarget(opp)) {
+                        return plan(sa, f, opp);
+                    }
+                }
+            }
+            return new AiAbilityDecision(0, AiPlayDecision.CantPlayAi);
+        }
+
+        private static int damage(final Card sacrificed) {
+            return 2 + sacrificed.getCMC();
+        }
+
+        private static AiAbilityDecision plan(final SpellAbility sa, final Card fodder, final GameEntity target) {
+            sa.resetTargets();
+            sa.getTargets().add(target);
+            ComputerUtil.setPlannedSacrifice(sa.getHostCard(), fodder);
+            return new AiAbilityDecision(100, AiPlayDecision.WillPlay);
+        }
+
+        /** What we give up: 0 if it's dying anyway; mana rocks and other real artifacts are never traded. */
+        private static int sacValue(final Player ai, final Card c, final SpellAbility sa) {
+            boolean pendingSacrifice = false; // e.g. evoked Fury/Solitude's sacrifice trigger
+            for (SpellAbilityStackInstance si : ai.getGame().getStack()) {
+                pendingSacrifice |= c.equals(si.getSourceCard()) && si.getSpellAbility().getApi() == ApiType.Sacrifice;
+            }
+            if (pendingSacrifice || (c.isCreature() && ComputerUtil.predictCreatureWillDieThisTurn(ai, c, sa, false))) {
+                return 0;
+            }
+            if (c.isCreature()) {
+                return ComputerUtilCard.evaluateCreature(c);
+            }
+            return c.isToken() ? 20 : 1000;
+        }
+
+        private static int targetValue(final Card t) {
+            return t.isCreature() ? ComputerUtilCard.evaluateCreature(t) : 200 + 25 * t.getCurrentLoyalty();
+        }
+
+        private static boolean wouldDie(final Card t, final int dmg, final Card source) {
+            if (t.isPlaneswalker() && !t.isCreature()) {
+                return ComputerUtilCombat.predictDamageTo(t, dmg, source, false) >= t.getCurrentLoyalty();
+            }
+            return !t.hasKeyword(Keyword.INDESTRUCTIBLE)
+                    && ComputerUtilCombat.predictDamageTo(t, dmg, source, false) >= ComputerUtilCombat.getDamageToKill(t, false);
         }
     }
 

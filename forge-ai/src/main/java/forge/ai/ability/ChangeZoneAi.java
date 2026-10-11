@@ -24,10 +24,12 @@ import forge.game.phase.PhaseHandler;
 import forge.game.phase.PhaseType;
 import forge.game.player.Player;
 import forge.game.player.PlayerActionConfirmMode;
+import forge.game.replacement.ReplacementType;
 import forge.game.spellability.AbilitySub;
 import forge.game.spellability.SpellAbility;
 import forge.game.spellability.TargetRestrictions;
 import forge.game.staticability.StaticAbilityMustTarget;
+import forge.game.trigger.TriggerType;
 import forge.game.zone.ZoneType;
 import forge.util.Aggregates;
 import forge.util.MyRandom;
@@ -1536,8 +1538,20 @@ public class ChangeZoneAi extends SpellAbilityAi {
      *   4. Medium creatures CMC 4-5 as fallback.
      *   5. NEVER: planeswalkers (can't be reanimated; Ugin, etc.) or other non-reusable permanents
      *      unless nothing better exists.
+     *
+     * Cards that don't stay in the graveyard are skipped: Blightsteel Colossus (replacement — it never
+     * reaches the graveyard at all) always; Worldspine Wurm (shuffle trigger) unless we hold an
+     * instant-speed reanimation we can afford, to cast in response (Necromancy; see
+     * AiController / PermanentAi isGraveyardShuffleTrigger).
      */
     private static Card doEntombLogic(final Player ai, final SpellAbility sa, CardCollection fetchList) {
+        final boolean canRespond = hasAffordableInstantReanimation(ai);
+        CardCollection staying = CardLists.filter(fetchList,
+                c -> !neverReachesGraveyard(c) && (canRespond || !shufflesAwayFromGraveyard(c)));
+        if (!staying.isEmpty()) {
+            fetchList = staying;
+        }
+
         boolean hasWelder = !CardLists.filter(ai.getCardsIn(ZoneType.Battlefield),
                 CardPredicates.nameEquals("Goblin Welder")).isEmpty();
 
@@ -1577,6 +1591,52 @@ public class ChangeZoneAi extends SpellAbilityAi {
         // Absolutely nothing useful — avoid planeswalkers if we can.
         CardCollection nonPW = CardLists.filter(fetchList, CardPredicates.PLANESWALKERS.negate());
         return ComputerUtilCard.getBestAI(nonPW.isEmpty() ? fetchList : nonPW);
+    }
+
+    /** A "would be put into a graveyard ... instead" self-replacement (Blightsteel Colossus). */
+    private static boolean neverReachesGraveyard(final Card c) {
+        return c.getReplacementEffects().stream().anyMatch(re -> re.getMode() == ReplacementType.Moved
+                && "Graveyard".equals(re.getParam("Destination"))
+                && re.getParamOrDefault("ValidCard", "").contains("Card.Self"));
+    }
+
+    /** "When this is put into a graveyard from anywhere, shuffle ..." (Worldspine Wurm, Eldrazi titans). */
+    private static boolean shufflesAwayFromGraveyard(final Card c) {
+        return c.getTriggers().stream().anyMatch(t -> t.getMode() == TriggerType.ChangesZone
+                && "Graveyard".equals(t.getParam("Destination"))
+                && !"Battlefield".equals(t.getParam("Origin"))
+                && t.getParamOrDefault("ValidCard", "").contains("Card.Self")
+                && c.getSVar(t.getParamOrDefault("Execute", "")).contains("Shuffle$ True"));
+    }
+
+    /** A trigger on the stack about to shuffle a creature card out of a graveyard: the last chance to reanimate it. */
+    public static boolean isGraveyardShuffleTrigger(final SpellAbility top) {
+        if (top == null || !top.isTrigger() || top.getHostCard() == null) {
+            return false;
+        }
+        final Card host = top.getHostCard();
+        return host.isCreature() && host.isInZone(ZoneType.Graveyard) && shufflesAwayFromGraveyard(host);
+    }
+
+    /** Hand card that can be cast at instant speed now and returns a creature card from a graveyard to play. */
+    private static boolean hasAffordableInstantReanimation(final Player ai) {
+        for (Card c : ai.getCardsIn(ZoneType.Hand)) {
+            boolean reanimates = c.getTriggers().stream().anyMatch(t ->
+                    c.getSVar(t.getParamOrDefault("Execute", "")).matches(".*Origin\\$ Graveyard.*Destination\\$ Battlefield.*"))
+                    || c.getSpells().stream().anyMatch(s -> s.getApi() == ApiType.ChangeZone
+                    && "Graveyard".equals(s.getParam("Origin")) && "Battlefield".equals(s.getParam("Destination")));
+            if (!reanimates) {
+                continue;
+            }
+            for (SpellAbility s : c.getSpells()) {
+                s.setActivatingPlayer(ai);
+                boolean instantSpeed = c.isInstant() || c.hasKeyword("MayFlashSac") || s.withFlash(c, ai);
+                if (instantSpeed && ComputerUtilMana.canPayManaCost(s, ai, 0, false)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static Card chooseCardToHiddenOriginChangeZone(ZoneType destination, List<ZoneType> origin, SpellAbility sa, CardCollection fetchList, Player player, final Player decider) {

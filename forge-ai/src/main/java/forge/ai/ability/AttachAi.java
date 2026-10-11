@@ -1050,6 +1050,40 @@ public class AttachAi extends SpellAbilityAi {
         return affected != null && (affected.contains(stCheck) || affected.contains("AttachedBy"));
     }
 
+    /**
+     * Equipment that lowers toughness and pays off when the equipped creature dies (Skullclamp:
+     * +1/-1, "whenever equipped creature dies, draw two cards"). Equipping it to one of our cheap
+     * creatures it will kill — a 1/1 token, a used-up utility creature, something about to die
+     * anyway — is a card-draw engine, so prefer the least valuable such creature.
+     * Returns null when this isn't such equipment or nothing is worth sacrificing.
+     */
+    private static Card chooseDiesForValueFodder(final Player ai, final List<Card> list, final Card attachSource) {
+        if (!attachSource.isEquipment()) {
+            return null;
+        }
+        final boolean paysOffOnDeath = attachSource.getTriggers().stream().anyMatch(t -> t.getMode() == TriggerType.ChangesZone
+                && "Battlefield".equals(t.getParam("Origin")) && "Graveyard".equals(t.getParam("Destination"))
+                && t.getParamOrDefault("ValidCard", "").contains("EquippedBy"));
+        if (!paysOffOnDeath) {
+            return null;
+        }
+        int toughnessMod = 0;
+        for (final StaticAbility stAb : attachSource.getStaticAbilities()) {
+            if (stAb.checkMode(StaticAbilityMode.Continuous) && stAb.hasParam("AddToughness")) {
+                toughnessMod += AbilityUtils.calculateAmount(attachSource, stAb.getParam("AddToughness"), stAb);
+            }
+        }
+        if (toughnessMod >= 0) {
+            return null;
+        }
+        final int tgh = toughnessMod;
+        final List<Card> fodder = CardLists.filter(list, c -> c.isCreature() && c.getController().equals(ai)
+                && c.getNetToughness() + tgh <= 0
+                && (c.isToken() || ComputerUtilCard.evaluateCreature(c) <= 150
+                    || ComputerUtil.predictCreatureWillDieThisTurn(ai, c, null, false)));
+        return fodder.isEmpty() ? null : ComputerUtilCard.getWorstCreatureAI(fodder);
+    }
+
     private static Card attachAIPumpPreference(final Player ai, final SpellAbility sa, final List<Card> list, final boolean mandatory, final Card attachSource) {
         // AI For choosing a Card to Pump
         Card card = null;
@@ -1341,6 +1375,13 @@ public class AttachAi extends SpellAbilityAi {
 
         // Filter AI-specific targets if provided
         prefList = ComputerUtil.filterAITgts(sa, aiPlayer, prefList, true);
+
+        // Skullclamp onto a creature it kills: do it every time it's available (even several times a
+        // turn), skipping the "only move equipment to a better creature / once per turn" checks below.
+        final Card fodder = chooseDiesForValueFodder(aiPlayer, prefList, attachSource);
+        if (fodder != null) {
+            return fodder;
+        }
 
         Card c = attachGeneralAI(aiPlayer, sa, prefList, mandatory, attachSource, sa.getParam("AILogic"));
 

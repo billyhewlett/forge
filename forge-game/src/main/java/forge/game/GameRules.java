@@ -4,6 +4,7 @@ import forge.item.PaperCard;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class GameRules {
@@ -30,6 +31,10 @@ public class GameRules {
 
     // Optional cube card pool for Booster Tutor in cube draft games
     private List<PaperCard> cubeCardPool = null;
+
+    // Optional cube draft rankings (card name -> rank / cube size, lower = better) so in-game AI
+    // can tell which of its cards the cube rates highest (e.g. which spell to name for Double Stroke)
+    private Map<String, Double> cubeDraftRankings = null;
 
     public GameRules(final GameType type) {
         this.gameType = type;
@@ -161,5 +166,13 @@ public class GameRules {
     }
     public void setCubeCardPool(final List<PaperCard> pool) {
         this.cubeCardPool = pool;
+    }
+
+    /** Cube draft ranking for a card name (rank / cube size, lower = better), or null if unranked. */
+    public Double getCubeDraftRanking(final String cardName) {
+        return cubeDraftRankings == null ? null : cubeDraftRankings.get(cardName);
+    }
+    public void setCubeDraftRankings(final Map<String, Double> rankings) {
+        this.cubeDraftRankings = rankings;
     }
 }

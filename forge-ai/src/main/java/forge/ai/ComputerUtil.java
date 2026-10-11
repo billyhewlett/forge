@@ -531,6 +531,23 @@ public class ComputerUtil {
         return -1;
     }
 
+    // A card that a card-specific AI logic decided to sacrifice for a cost of its source's ability
+    // (e.g. Broadside Bombardiers: which creature to fling). Keyed weakly by the source card so stale
+    // plans disappear; honoured by ComputerUtilCost.checkSacrificeCost and chooseSacrificeType.
+    private static final Map<Card, Card> plannedSacrifices = Collections.synchronizedMap(new WeakHashMap<>());
+
+    public static void setPlannedSacrifice(final Card source, final Card toSacrifice) {
+        if (toSacrifice == null) {
+            plannedSacrifices.remove(source);
+        } else {
+            plannedSacrifices.put(source, toSacrifice);
+        }
+    }
+
+    public static Card getPlannedSacrifice(final Card source) {
+        return source == null ? null : plannedSacrifices.get(source);
+    }
+
     public static CardCollection chooseSacrificeType(final Player ai, String type, final SpellAbility ability, final Card target, final boolean effect, final int amount, final CardCollectionView exclude) {
         final Card source = ability.getHostCard();
         boolean differentNames = false;
@@ -569,6 +586,12 @@ public class ComputerUtil {
 
         if (typeList.size() < amount) {
             return null;
+        }
+
+        final Card planned = getPlannedSacrifice(source);
+        if (amount == 1 && planned != null && typeList.contains(planned)) {
+            setPlannedSacrifice(source, null);
+            return new CardCollection(planned);
         }
 
         final CardCollection sacList = new CardCollection();
