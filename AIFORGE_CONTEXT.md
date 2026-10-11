@@ -106,6 +106,13 @@ Proclamation, Backup Plan, Double Stroke) and custom cards (Gleemox).
 - Double Stroke timing, Luminarch Aspirant main-phase casting (`SetStateAi.java`, card script)
 - Entomb picks real graveyard targets (big creatures, Echo of Eons; never planeswalkers)
 
+### Desktop cursor scaling (phone-style UI on PC, 2026-10-11)
+- The libGDX UI's custom 32px cursor ignored Windows display scaling and pointer size (tiny on the
+  4K/200% desktop with pointer size 4). `GameLauncher.getSystemCursorScale()` (forge-gui-mobile-dev,
+  Windows only) = AWT display scale × `HKCU\Control Panel\Cursors\CursorBaseSize`/32, passed to
+  `Forge.setDesktopCursorScale()`; `Forge.newScaledCursor()` scales every cursor image. Prints
+  `Cursor scale: ...` on startup. Android unaffected (setCursor returns early on mobile).
+
 ### Shared signing keystore
 - `forge-gui-android/aiforge.keystore` — PKCS12, alias `androiddebugkey`, pass `android`
   Both laptop and desktop must sign with this file to allow `adb install -r` upgrades.

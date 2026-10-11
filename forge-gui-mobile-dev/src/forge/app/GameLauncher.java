@@ -15,8 +15,11 @@ import io.sentry.protocol.OperatingSystem;
 import org.lwjgl.system.Configuration;
 import oshi.SystemInfo;
 
+import java.awt.GraphicsEnvironment;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GameLauncher {
     public GameLauncher(final String versionString, final String[] args) {
@@ -68,6 +71,7 @@ public class GameLauncher {
         // Only disable desktop auto-orientation when the user *really* overrides it
         boolean overrideOrientation = portraitArg || landscapeArg || hasBothDims;
         Forge.setDesktopAutoOrientation(!overrideOrientation);
+        Forge.setDesktopCursorScale(getSystemCursorScale());
 
         // Determine desired portrait/landscape only if we are overriding orientation.
         boolean isPortrait = false;
@@ -139,6 +143,37 @@ public class GameLauncher {
         });
 
         new Lwjgl3Application(start, config);
+    }
+
+    /**
+     * How much bigger the OS pointer is than Forge's 32px cursor images: display scaling (2.0 at 200%)
+     * times the Windows accessibility pointer size (CursorBaseSize: 32 = default, 48, 64, ...).
+     * Windows only; elsewhere 1 (AWT before GLFW is unsafe on macOS, and there's no registry).
+     */
+    private static float getSystemCursorScale() {
+        if (!forge.util.OperatingSystem.isWindows())
+            return 1f;
+        float displayScale = 1f;
+        try {
+            displayScale = (float) GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+                    .getDefaultConfiguration().getDefaultTransform().getScaleX();
+        } catch (Exception | Error e) {
+            e.printStackTrace();
+        }
+        float pointerScale = 1f;
+        try {
+            Process reg = new ProcessBuilder("reg", "query", "HKCU\\Control Panel\\Cursors", "/v", "CursorBaseSize")
+                    .redirectErrorStream(true).start();
+            Matcher m = Pattern.compile("CursorBaseSize\\s+REG_DWORD\\s+0x([0-9a-fA-F]+)")
+                    .matcher(new String(reg.getInputStream().readAllBytes()));
+            if (m.find())
+                pointerScale = Integer.parseInt(m.group(1), 16) / 32f;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        float scale = Math.max(1f, displayScale * pointerScale);
+        System.out.println("Cursor scale: " + scale + " (display " + displayScale + " x pointer " + pointerScale + ")");
+        return scale;
     }
 
     private static float getPrimaryScreenAspect() {

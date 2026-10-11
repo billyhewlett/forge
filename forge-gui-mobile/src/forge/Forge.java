@@ -560,13 +560,13 @@ public class Forge implements ApplicationListener {
             Pixmap pm = new Pixmap(Config.instance().getFile(path));
 
             if ("0".equals(name)) {
-                cursorA0 = Gdx.graphics.newCursor(pm, 0, 0);
+                cursorA0 = newScaledCursor(pm);
                 setGdxCursor(cursorA0);
             } else if ("1".equals(name)) {
-                cursorA1 = Gdx.graphics.newCursor(pm, 0, 0);
+                cursorA1 = newScaledCursor(pm);
                 setGdxCursor(cursorA1);
             } else {
-                cursorA2 = Gdx.graphics.newCursor(pm, 0, 0);
+                cursorA2 = newScaledCursor(pm);
                 setGdxCursor(cursorA2);
             }
 
@@ -609,17 +609,41 @@ public class Forge implements ApplicationListener {
                 textureRegion.getRegionHeight() // The height of the area from the other Pixmap in pixels
         );
         if ("0".equals(name)) {
-            cursor0 = Gdx.graphics.newCursor(pm, 0, 0);
+            cursor0 = newScaledCursor(pm);
             setGdxCursor(cursor0);
         } else if ("1".equals(name)) {
-            cursor1 = Gdx.graphics.newCursor(pm, 0, 0);
+            cursor1 = newScaledCursor(pm);
             setGdxCursor(cursor1);
         } else {
-            cursor2 = Gdx.graphics.newCursor(pm, 0, 0);
+            cursor2 = newScaledCursor(pm);
             setGdxCursor(cursor2);
         }
         cursorName = name;
         pm.dispose();
+    }
+
+    /** Desktop only: Forge's cursors are fixed-size images (e.g. 32x32) that ignore the OS display
+     *  scaling and pointer-size settings, so on a scaled high-res screen they look tiny. The desktop
+     *  launcher sets this to match the system pointer; 1 = unscaled (always on Android). */
+    private static float desktopCursorScale = 1f;
+
+    public static void setDesktopCursorScale(float scale) {
+        desktopCursorScale = scale;
+    }
+
+    private static Cursor newScaledCursor(Pixmap pm) {
+        if (desktopCursorScale <= 1f)
+            return Gdx.graphics.newCursor(pm, 0, 0);
+        int w = Math.round(pm.getWidth() * desktopCursorScale);
+        int h = Math.round(pm.getHeight() * desktopCursorScale);
+        Pixmap scaled = new Pixmap(w, h, pm.getFormat());
+        scaled.setBlending(Pixmap.Blending.None);
+        // whole-number scales keep the pixel art crisp; fractional ones need smoothing
+        scaled.setFilter(desktopCursorScale % 1f == 0f ? Pixmap.Filter.NearestNeighbour : Pixmap.Filter.BiLinear);
+        scaled.drawPixmap(pm, 0, 0, pm.getWidth(), pm.getHeight(), 0, 0, w, h);
+        Cursor cursor = Gdx.graphics.newCursor(scaled, 0, 0); // hotspot stays at the tip (0,0)
+        scaled.dispose();
+        return cursor;
     }
 
     static void setGdxCursor(Cursor c) {
