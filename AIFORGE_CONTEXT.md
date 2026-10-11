@@ -19,6 +19,17 @@ for a Pixel 9 Pro XL. Hand this file to Claude Code on desktop or laptop as star
   `rerank.py` (build `AIForgeRankings.txt`), `cube_diff.py` (describe swaps for the changelog),
   plus `build-aiforge.ps1` one level up (build/deploy).
 - **`CUBE_CHANGELOG.md`** (repo root): one entry per cube update, newest first.
+- **Desktop play (desktop PC): `E:\Forge-AIForge`** — `Forge (desktop UI).cmd` (classic Swing UI) and
+  `Forge (phone-style UI).cmd` (forge-gui-mobile-dev, same UI as the phone). Its `res` is a
+  **junction to `E:\fl-aiforge-v2\forge-gui\res`**, so cube/rankings/card-script changes in the repo
+  apply on the next launch with no copying. The jars are copies, so rebuild them after Java
+  changes or an upstream merge (code and `res` must come from the same commit — a version mismatch
+  shows up as `INVALID PROPERTY ... Translation missing` in `%APPDATA%\Forge\forge.log`):
+  `mvn -s .mvn/local-settings.xml -pl forge-gui-desktop,forge-gui-mobile-dev -am package -DskipTests -q`,
+  then copy `forge-gui-desktop/target/*-jar-with-dependencies.jar` → `forge-gui-desktop.jar` and
+  `forge-gui-mobile-dev/target/*-jar-with-dependencies.jar` → `forge-gui-mobile-dev.jar`.
+  User data (decks, prefs) is in `%APPDATA%\Forge`, shared with the older installs
+  (`Downloads\FORGE`, `OneDrive\Documents\FORGE`, `E:\FORGE` — stale stock builds, superseded).
 
 ---
 
