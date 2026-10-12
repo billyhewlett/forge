@@ -300,6 +300,13 @@ public class ChangeZoneAi extends SpellAbilityAi {
         }
         final String destination = sa.getParam("Destination");
 
+        // Shallow Grave / Corpse Dance: the creature is exiled at the next end step, so only
+        // reanimate when it gets to attack before that (see temporaryReanimationWindowOpen)
+        if ("Battlefield".equals(destination) && origin != null && origin.contains(ZoneType.Graveyard)
+                && exilesReanimatedAtEndStep(sa) && !temporaryReanimationWindowOpen(ai)) {
+            return new AiAbilityDecision(0, AiPlayDecision.AnotherTime);
+        }
+
         if (sa.isNinjutsu()) {
             if (!source.ignoreLegendRule() && ai.isCardInPlay(source.getName())) {
                 return new AiAbilityDecision(0, AiPlayDecision.WouldDestroyLegend);
@@ -1618,6 +1625,29 @@ public class ChangeZoneAi extends SpellAbilityAi {
         return host.isCreature() && host.isInZone(ZoneType.Graveyard) && shufflesAwayFromGraveyard(host);
     }
 
+    /** Reanimation that only borrows the creature: "exile it at the beginning of the next end step" (Shallow Grave, Corpse Dance). */
+    public static boolean exilesReanimatedAtEndStep(final SpellAbility sa) {
+        for (SpellAbility s = sa; s != null; s = s.getSubAbility()) {
+            if (s.getParamOrDefault("AtEOT", "").contains("Exile")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * When a temporary reanimation (exiled at the next end step) gets a hasty attack out of it: on our
+     * own turn before attackers are declared, or in the opponent's end step — past that end step's
+     * "beginning of" triggers, so the exile waits for our end step and the creature attacks on our turn.
+     */
+    public static boolean temporaryReanimationWindowOpen(final Player ai) {
+        final PhaseHandler ph = ai.getGame().getPhaseHandler();
+        if (ph.isPlayerTurn(ai)) {
+            return ph.getPhase().isBefore(PhaseType.COMBAT_DECLARE_ATTACKERS);
+        }
+        return ph.is(PhaseType.END_OF_TURN) || ph.is(PhaseType.CLEANUP);
+    }
+
     /** Hand card that can be cast at instant speed now and returns a creature card from a graveyard to play. */
     private static boolean hasAffordableInstantReanimation(final Player ai) {
         for (Card c : ai.getCardsIn(ZoneType.Hand)) {
@@ -1631,7 +1661,8 @@ public class ChangeZoneAi extends SpellAbilityAi {
             for (SpellAbility s : c.getSpells()) {
                 s.setActivatingPlayer(ai);
                 boolean instantSpeed = c.isInstant() || c.hasKeyword("MayFlashSac") || s.withFlash(c, ai);
-                if (instantSpeed && ComputerUtilMana.canPayManaCost(s, ai, 0, false)) {
+                boolean worthItNow = !exilesReanimatedAtEndStep(s) || temporaryReanimationWindowOpen(ai);
+                if (instantSpeed && worthItNow && ComputerUtilMana.canPayManaCost(s, ai, 0, false)) {
                     return true;
                 }
             }

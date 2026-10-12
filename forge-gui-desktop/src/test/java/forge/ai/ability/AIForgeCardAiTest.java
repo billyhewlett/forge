@@ -126,23 +126,95 @@ public class AIForgeCardAiTest extends AITest {
     }
 
     @Test
-    public void testNecromancyRespondsToWorldspineShuffleTrigger() {
+    public void testEntombPicksWorldspineWithShallowGraveBeforeCombat() {
         Game game = initAndCreateGame();
         Player ai = game.getPlayers().get(1);
-        addCards("Swamp", 3, ai);
-        addCardToZone("Necromancy", ai, ZoneType.Hand);
-        Card wurm = addCardToZone("Worldspine Wurm", ai, ZoneType.Library);
+        CardCollection library = new CardCollection();
+        library.add(addCardToZone("Worldspine Wurm", ai, ZoneType.Library));
+        library.add(addCardToZone("Archon of Cruelty", ai, ZoneType.Library));
+        addCards("Swamp", 2, ai);
+        addCardToZone("Shallow Grave", ai, ZoneType.Hand);
         game.getPhaseHandler().devModeSet(PhaseType.MAIN1, ai);
 
-        // as if Entomb just resolved: the Wurm's "shuffle into library" trigger goes on the stack
+        AssertJUnit.assertEquals("Worldspine Wurm", entombChoice(ai, library).getName());
+    }
+
+    @Test
+    public void testEntombPicksWorldspineWithShallowGraveInOpponentsEndStep() {
+        // cast in the opponent's end step, the "exile at the next end step" waits for OUR end step
+        Game game = initAndCreateGame();
+        Player ai = game.getPlayers().get(1);
+        CardCollection library = new CardCollection();
+        library.add(addCardToZone("Worldspine Wurm", ai, ZoneType.Library));
+        library.add(addCardToZone("Archon of Cruelty", ai, ZoneType.Library));
+        addCards("Swamp", 2, ai);
+        addCardToZone("Shallow Grave", ai, ZoneType.Hand);
+        game.getPhaseHandler().devModeSet(PhaseType.END_OF_TURN, game.getPlayers().get(0));
+
+        AssertJUnit.assertEquals("Worldspine Wurm", entombChoice(ai, library).getName());
+    }
+
+    @Test
+    public void testEntombSkipsWorldspineWithShallowGraveInOpponentsMainPhase() {
+        // Shallow Grave/Corpse Dance exile the creature at end of turn: here it would never attack
+        Game game = initAndCreateGame();
+        Player ai = game.getPlayers().get(1);
+        CardCollection library = new CardCollection();
+        library.add(addCardToZone("Worldspine Wurm", ai, ZoneType.Library));
+        library.add(addCardToZone("Archon of Cruelty", ai, ZoneType.Library));
+        addCards("Swamp", 2, ai);
+        addCardToZone("Shallow Grave", ai, ZoneType.Hand);
+        game.getPhaseHandler().devModeSet(PhaseType.MAIN2, game.getPlayers().get(0));
+
+        AssertJUnit.assertEquals("Archon of Cruelty", entombChoice(ai, library).getName());
+    }
+
+    /** Puts Worldspine Wurm's shuffle trigger on the stack (as if Entomb just resolved); returns the AI's response. */
+    private String respondToWorldspineTrigger(String reanimator, int swamps, PhaseType phase, boolean aiTurn) {
+        Game game = initAndCreateGame();
+        Player ai = game.getPlayers().get(1);
+        addCards("Swamp", swamps, ai);
+        addCardToZone(reanimator, ai, ZoneType.Hand);
+        Card wurm = addCardToZone("Worldspine Wurm", ai, ZoneType.Library);
+        game.getPhaseHandler().devModeSet(phase, aiTurn ? ai : game.getPlayers().get(0));
+
         game.getAction().moveToGraveyard(wurm, null);
         game.getTriggerHandler().runWaitingTriggers();
         game.getStack().addAllTriggeredAbilitiesToStack();
         AssertJUnit.assertFalse("shuffle trigger should be on the stack", game.getStack().isEmpty());
 
         java.util.List<SpellAbility> chosen = ((forge.ai.PlayerControllerAi) ai.getController()).getAi().chooseSpellAbilityToPlay();
-        AssertJUnit.assertNotNull("AI should respond to its own shuffle trigger", chosen);
-        AssertJUnit.assertEquals("Necromancy", chosen.get(0).getHostCard().getName());
+        return chosen == null || chosen.isEmpty() ? null : chosen.get(0).getHostCard().getName();
+    }
+
+    @Test
+    public void testNecromancyRespondsToWorldspineShuffleTrigger() {
+        AssertJUnit.assertEquals("Necromancy", respondToWorldspineTrigger("Necromancy", 3, PhaseType.MAIN1, true));
+    }
+
+    @Test
+    public void testShallowGraveRespondsToWorldspineShuffleTriggerBeforeCombat() {
+        AssertJUnit.assertEquals("Shallow Grave", respondToWorldspineTrigger("Shallow Grave", 2, PhaseType.MAIN1, true));
+    }
+
+    @Test
+    public void testCorpseDanceRespondsToWorldspineShuffleTriggerBeforeCombat() {
+        AssertJUnit.assertEquals("Corpse Dance", respondToWorldspineTrigger("Corpse Dance", 3, PhaseType.MAIN1, true));
+    }
+
+    @Test
+    public void testShallowGraveRespondsToWorldspineShuffleTriggerInOpponentsEndStep() {
+        AssertJUnit.assertEquals("Shallow Grave", respondToWorldspineTrigger("Shallow Grave", 2, PhaseType.END_OF_TURN, false));
+    }
+
+    @Test
+    public void testShallowGraveDoesNotWasteWorldspineInOpponentsMainPhase() {
+        AssertJUnit.assertNull(respondToWorldspineTrigger("Shallow Grave", 2, PhaseType.MAIN2, false));
+    }
+
+    @Test
+    public void testCorpseDanceDoesNotWasteWorldspineAfterOwnCombat() {
+        AssertJUnit.assertNull(respondToWorldspineTrigger("Corpse Dance", 3, PhaseType.MAIN2, true));
     }
 
     // ---------------- Skullclamp ----------------

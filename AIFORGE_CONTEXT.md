@@ -113,7 +113,9 @@ Proclamation, Backup Plan, Double Stroke) and custom cards (Gleemox).
 - **Cube rankings in-game:** `HostedMatch.startMatch(..., cubeName)` loads the cube pool and the
   .draft's CustomRankings into `GameRules` (`getCubeDraftRanking(name)`) for in-game AI choices.
 - **Entomb:** never Blightsteel (replacement, never in graveyard); Worldspine-style shufflers only
-  with affordable instant reanimation (Necromancy is the only one in the cube). AI responds to the
+  with affordable instant reanimation (Necromancy; also Shallow Grave/Corpse Dance, which exile at the
+  next end step, so only on our turn before attackers or in the opponent's end step —
+  `ChangeZoneAi.temporaryReanimationWindowOpen`, also gating their normal casts). AI responds to the
   shuffle trigger with Necromancy (`ChangeZoneAi.isGraveyardShuffleTrigger`, AiController
   must-respond, PermanentAi MayFlashSac exception).
 - **Skullclamp:** `AttachAi.chooseDiesForValueFodder` — equip onto own tokens/low-value creatures it
